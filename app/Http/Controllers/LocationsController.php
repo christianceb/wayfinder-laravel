@@ -79,8 +79,10 @@ class LocationsController extends Controller
 	 */
 	public function edit($id)
 	{
-		//
-		return view('locations.update');
+		$locations = Locations::find($id);
+        Return view('locations.update', [
+            'locations'=>$locations
+        ]);
 	}
 
 	/**
@@ -92,8 +94,20 @@ class LocationsController extends Controller
 	 */
 	public function update(Request $request, $id)
 	{
-		//
+		// update
+		request()->validate(
+			[
+				'locationsName' => ['required', 'max:50'],
+				'locationsType' => 'required',
+			]
+		);
+		$locations = Locations::find($id);
 
+		$locations->name = request('locationsName');
+    $locations->type = request('locationsType');
+  	$locations->save();
+
+    return redirect('/locations/'.$id)->with('success','Location updated successfully.');
 	}
 
 	/**
