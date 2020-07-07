@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Locations;
 use Illuminate\Http\Request;
 
 class LocationsController extends Controller
@@ -13,8 +14,11 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        //
-        return view('locations.index');
+        // show all items inside Locations Table
+        $allLocations = Locations::all();
+        return view('locations.index', [
+            'Locations' => $allLocations
+        ]);
     }
 
     /**
@@ -36,7 +40,20 @@ class LocationsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validate the input for subject and description
+        request()->validate(
+            [
+                'locationsName' => ['required', 'max:50'],
+                'locationsType' => 'required',
+            ]
+        );
+
+        $locations = new Locations();
+        $locations->name = $request->locationsName;
+        $locations->type = $request->locationsType;
+        $locations->save();
+
+        return redirect('/locations')->with('success','Location created successfully.');
     }
 
     /**
@@ -73,6 +90,7 @@ class LocationsController extends Controller
     public function update(Request $request, $id)
     {
         //
+
     }
 
     /**
