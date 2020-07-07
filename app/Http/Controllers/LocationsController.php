@@ -118,6 +118,9 @@ class LocationsController extends Controller
 	 */
 	public function destroy($id)
 	{
-		//
+		// delete a particular location by their id's
+		$locations = Locations::findOrFail($id);
+        $locations->delete();
+        Return redirect('/locations');
 	}
 }
