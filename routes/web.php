@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function() {
     return view('welcome');
 });
+
+Route::resource('/events', 'EventController');
+
+// Route::get('/events', 'EventController@index')->name('home');
+// Route::post('/events', 'EventController@store');
+// Route::get('/events/create', 'EventController@create');
+// Route::get('/events/{events}', 'EventController@show');
+// Route::get('/events/{events}/edit', 'EventContoller@edit');
+// Route::put('/events/{events}', 'EventController@update');
+// Route::patch('/events/{events}', 'EventController@update');
+// Route::delete('/events/{events}', 'EventController@destroy');
