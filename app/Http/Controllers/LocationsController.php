@@ -64,8 +64,11 @@ class LocationsController extends Controller
 	 */
 	public function show($id)
 	{
-		//
-		return view('locations.show');
+		// show a specific location by their id
+		$locations = Locations::find($id);
+        Return view('locations.show', [
+            'locations'=>$locations
+        ]);
 	}
 
 	/**

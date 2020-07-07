@@ -31,7 +31,7 @@ Locations: Browse
 					{{App\Locations::getType($location->type)}}
 				</td>
 				<td>
-					<form action="/feedbackSubjects/{{$location->id}}" method="post">
+					<form action="/locations/{{$location->id}}" method="post">
 						@csrf
 						@method('delete')
 
