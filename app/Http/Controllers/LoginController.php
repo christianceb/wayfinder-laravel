@@ -13,13 +13,6 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-
-        if(Auth::user()) {
-            return redirect()
-            ->route('Admin.successlogin')
-            ->with('Welcome! Your logged in');
-        }
-
     }
 
     /**
@@ -51,37 +44,12 @@ class LoginController extends Controller
      * @return Response
      */
 
-function checklogin(Request $request) {
-
-    $this->validate($request, [
-        'email'   => 'required|email',
-        'password'  => 'required'
-    ]);
-
-    // create our user data for the authentication
-    $userdata = $request->only('email', 'password');
-
-    // attempt to do the login
-    if (Auth::attempt($userdata)) {
-        return redirect()
-        ->route('Admin.successlogin')
-        ->with('Welcome! Your logged in');
-    } 
-    else {        
-    // validation not successful, send back to form 
-    return back()->with('error', 'Wrong Login Details');
-}
-
-    
-}
-
     function successlogin() {
         return view('Admin.successlogin');
     }
 
     function logout() {
         Auth::logout();
-        return view('Admin.login');
     }
     /**
      * Store a newly created resource in storage.

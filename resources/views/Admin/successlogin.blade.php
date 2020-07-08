@@ -9,7 +9,7 @@
     <div class="alert alert-danger success-block">
      <strong>Welcome {{ Auth::user()->email }}</strong>
      <br />
-     <a href="{{ url('/Admin/login') }}">Logout</a>
+     <a href="{{ url('/Admin/logout') }}">Logout</a>
     </div>
    @else
    @endif

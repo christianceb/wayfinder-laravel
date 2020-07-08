@@ -22,5 +22,4 @@ Auth::routes();
 
 Route::get('/Admin', 'LoginController@index')->name('home')->middleware('auth');
 Route::get('/Admin/logout', 'LoginController@logout');
-// Route::post('/Admin/checklogin', 'LoginController@checklogin');
 Route::get('/Admin/successlogin', 'LoginController@successlogin');
