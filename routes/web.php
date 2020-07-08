@@ -20,6 +20,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/Admin', 'LoginController@index')->name('home')->middleware('auth');
+Route::get('/Admin', 'LoginController@index')->middleware('auth');
 Route::get('/Admin/logout', 'LoginController@logout');
 Route::get('/Admin/successlogin', 'LoginController@successlogin');
