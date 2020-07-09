@@ -17,8 +17,8 @@ Route::get('/', function() {
     return view('welcome');
 });
 
-Route::get('/Admin', 'AdminController@index')->name('home');
-Route::resource('/Admin', 'AdminController');
+Route::get('/Admin', 'UserController@index')->name('home');
+Route::resource('/Admin', 'UserController');
 
 Route::resource('/events', 'EventController');
 Route::resource('/uploads', 'UploadsController');
