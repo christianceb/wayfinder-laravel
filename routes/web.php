@@ -17,6 +17,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::resource('/uploads', 'UploadsController');
 Route::resource('/locations', 'LocationsController');
 
 Route::get('/locations', 'LocationsController@index')->name('home');
