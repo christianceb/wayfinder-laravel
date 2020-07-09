@@ -17,13 +17,16 @@ Route::get('/', function() {
     return view('welcome');
 });
 
-Route::resource('/events', 'EventController');
 
-// Route::get('/events', 'EventController@index')->name('home');
-// Route::post('/events', 'EventController@store');
-// Route::get('/events/create', 'EventController@create');
-// Route::get('/events/{events}', 'EventController@show');
-// Route::get('/events/{events}/edit', 'EventContoller@edit');
-// Route::put('/events/{events}', 'EventController@update');
-// Route::patch('/events/{events}', 'EventController@update');
-// Route::delete('/events/{events}', 'EventController@destroy');
+Route::resource('/events', 'EventController');
+Route::resource('/uploads', 'UploadsController');
+Route::resource('/locations', 'LocationsController');
+
+Route::get('/locations', 'LocationsController@index')->name('home');
+Route::post('/locations', 'LocationsController@store');
+Route::get('/locations /create', 'LocationsController@create');
+Route::get('/locations /{locations}', 'LocationsController@show');
+Route::get('/locations /{locations} /edit', 'LocationsController@edit');
+Route::put('/locations /{locations}', 'LocationsController@update');
+Route::patch('/locations /{locations}', 'LocationsController@update');
+Route::delete('/locations /{locations}', 'LocationsController@destroy');
