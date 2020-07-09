@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -14,6 +16,9 @@ class AdminController extends Controller
     public function index()
     {
         //
+
+        $admin = User::all();
+        return view('Admin.Admin_Browse', ['admin' => $admin]);
     }
 
     /**
@@ -24,6 +29,7 @@ class AdminController extends Controller
     public function create()
     {
         //
+        return view('Admin.Admin_Create');
     }
 
     /**
@@ -35,6 +41,22 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+        
+        $admin = new User([
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'password' => Hash::make($request->get('password'))
+        ]);
+
+        $admin->save();
+        return redirect('/Admin')
+        ->with('success','Admin created');
+
     }
 
     /**
@@ -46,6 +68,8 @@ class AdminController extends Controller
     public function show($id)
     {
         //
+        $admin = User::find($id);
+        return view('Admin.Admin_Show', ['admin' => $admin]);
     }
 
     /**
@@ -57,6 +81,8 @@ class AdminController extends Controller
     public function edit($id)
     {
         //
+        $admin = User::find($id);
+        return view('Admin.Admin_edit', ['admin' => $admin]);
     }
 
     /**
@@ -69,6 +95,20 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+        $admin = User::find($id);
+        $admin->name = $request->get('name');
+        $admin->email = $request->get('email');
+        $admin->password = Hash::make($request->get('password'));
+
+        $admin->update();
+        return redirect('/Admin')
+        ->with('success','Admin updated');
+        
     }
 
     /**
@@ -80,5 +120,17 @@ class AdminController extends Controller
     public function destroy($id)
     {
         //
+        $admin = User::findOrFail($id);
+        // hide goes here
+
+        // if($admin) {
+        //     echo '<script>document.getElementById("id").style.display = "none"; </script>';
+        // }
+
+        // delete for now to not waste time and continue the sprint
+        $admin->delete();
+
+        return redirect('/Admin')->with('success', 'Admin hidden');
+
     }
 }
