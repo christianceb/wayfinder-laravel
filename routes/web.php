@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,16 +18,24 @@ Route::get('/', function() {
     return view('welcome');
 });
 
+// Disable planned routes
+Auth::routes([
+    'register' => false,
+    'reset' => false,
+    'verify' => false
+]);
+
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/events', 'EventController');
 Route::resource('/uploads', 'UploadsController');
 Route::resource('/locations', 'LocationsController');
 
-Route::get('/locations', 'LocationsController@index')->name('home');
-Route::post('/locations', 'LocationsController@store');
-Route::get('/locations /create', 'LocationsController@create');
-Route::get('/locations /{locations}', 'LocationsController@show');
-Route::get('/locations /{locations} /edit', 'LocationsController@edit');
-Route::put('/locations /{locations}', 'LocationsController@update');
-Route::patch('/locations /{locations}', 'LocationsController@update');
-Route::delete('/locations /{locations}', 'LocationsController@destroy');
+// Route::get('/locations', 'LocationsController@index')->name('home');
+// Route::post('/locations', 'LocationsController@store');
+// Route::get('/locations /create', 'LocationsController@create');
+// Route::get('/locations /{locations}', 'LocationsController@show');
+// Route::get('/locations /{locations} /edit', 'LocationsController@edit');
+// Route::put('/locations /{locations}', 'LocationsController@update');
+// Route::patch('/locations /{locations}', 'LocationsController@update');
+// Route::delete('/locations /{locations}', 'LocationsController@destroy');

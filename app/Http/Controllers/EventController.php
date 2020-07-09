@@ -9,6 +9,11 @@ use App\events;
 
 class EventController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -50,12 +55,11 @@ class EventController extends Controller
             'end' => 'required',
             'location' => 'required'
         ]);
-        
-        events::create($data);
-        
-        return redirect()->route('events.index')
-        ->with('success', 'Event created');
 
+        events::create($data);
+
+        return redirect()->route('events.index')
+            ->with('success', 'Event created');
     }
 
     /**
@@ -116,7 +120,7 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-        
+
         $events = events::whereId($id);
         $events->delete();
 

@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class LocationsController extends Controller
 {
+	public function __construct()
+	{
+		$this->middleware('auth');
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -66,9 +71,9 @@ class LocationsController extends Controller
 	{
 		// show a specific location by their id
 		$locations = Locations::find($id);
-        Return view('locations.show', [
-            'locations'=>$locations
-        ]);
+		return view('locations.show', [
+			'locations' => $locations
+		]);
 	}
 
 	/**
@@ -80,9 +85,9 @@ class LocationsController extends Controller
 	public function edit($id)
 	{
 		$locations = Locations::find($id);
-        Return view('locations.update', [
-            'locations'=>$locations
-        ]);
+		return view('locations.update', [
+			'locations' => $locations
+		]);
 	}
 
 	/**
@@ -104,10 +109,10 @@ class LocationsController extends Controller
 		$locations = Locations::find($id);
 
 		$locations->name = request('locationsName');
-    $locations->type = request('locationsType');
-  	$locations->save();
+		$locations->type = request('locationsType');
+		$locations->save();
 
-    return redirect('/locations/'.$id)->with('success','Location updated successfully.');
+		return redirect('/locations/' . $id)->with('success', 'Location updated successfully.');
 	}
 
 	/**
@@ -120,7 +125,7 @@ class LocationsController extends Controller
 	{
 		// delete a particular location by their id's
 		$locations = Locations::findOrFail($id);
-        $locations->delete();
-        Return redirect('/locations');
+		$locations->delete();
+		return redirect('/locations');
 	}
 }
