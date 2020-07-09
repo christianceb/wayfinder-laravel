@@ -3,9 +3,8 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
 
-class Userseeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,11 +13,10 @@ class Userseeder extends Seeder
      */
     public function run()
     {
-        //
         DB::table('users')->insert([
-            'email' => 'admin@mail.com',
-            'password' => Hash::make('password'),
+            ['email' => 'j393554@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
+            ['email' => 'j393430@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
+            ['email' => '20026909@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')]
         ]);
-        
     }
 }

@@ -8,6 +8,7 @@
     <script src="{{ asset('js/app.js') }}"></script>
   </head>
   <body>
+    @include('layouts.navbar')
     @yield('content')
   </body>
 </html>
