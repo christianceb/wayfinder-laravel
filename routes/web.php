@@ -18,10 +18,6 @@ Route::get('/', function() {
     return view('welcome');
 });
 
-<<<<<<< HEAD
-Route::get('/Admin', 'UserController@index')->name('home');
-Route::resource('/Admin', 'UserController');
-=======
 // Disable planned routes
 Auth::routes([
     'register' => false,
@@ -30,7 +26,6 @@ Auth::routes([
 ]);
 
 Route::get('/home', 'HomeController@index')->name('home');
->>>>>>> 41a85c360c4e2fc325bc00a745f40a05ddfade0b
 
 Route::resource('/events', 'EventController');
 Route::resource('/uploads', 'UploadsController');
