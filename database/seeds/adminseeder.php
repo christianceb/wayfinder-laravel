@@ -12,7 +12,7 @@ class adminseeder extends Seeder
      * @return void
      */
     public function run()
-    {
+    { 
         //
     DB::table('users')->insert([
         'name' => 'admin',

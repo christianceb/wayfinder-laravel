@@ -25,6 +25,9 @@ Auth::routes([
     'verify' => false
 ]);
 
+Route::get('/Admin', 'AdminController@index')->name('home');
+Route::resource('/Admin', 'AdminController');
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/events', 'EventController');

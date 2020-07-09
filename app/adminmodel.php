@@ -10,4 +10,5 @@ class adminmodel extends Model
         'email', 'password', 'name'
     ];
 
-}
+
+} 
