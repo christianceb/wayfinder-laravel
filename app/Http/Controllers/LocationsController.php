@@ -107,6 +107,7 @@ class LocationsController extends Controller
 
 		$locations->name = request('locationsName');
 		$locations->type = request('locationsType');
+		$locations->parent_id = request('locationsParent');
 		$locations->save();
 
 		return redirect('/locations/' . $id)->with('success', 'Location updated successfully.');
