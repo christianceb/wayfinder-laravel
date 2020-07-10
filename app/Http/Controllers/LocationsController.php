@@ -15,7 +15,6 @@ class LocationsController extends Controller
 	public function index()
 	{
 		// show all items inside Locations Table
-        $parent = Locations::with('parent')->get();
 		return view('locations.index', [
 			'Locations' => Locations::all()
 		]);
