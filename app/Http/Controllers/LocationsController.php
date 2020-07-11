@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Locations;
+use App\Location;
 use Illuminate\Http\Request;
 
 class LocationsController extends Controller
@@ -14,9 +14,9 @@ class LocationsController extends Controller
 	 */
 	public function index()
 	{
-		// show all items inside Locations Table
+		// show all items inside Location Table
 		return view('locations.index', [
-			'Locations' => Locations::all()
+			'Location' => Location::all()
 		]);
 	}
 
@@ -47,7 +47,7 @@ class LocationsController extends Controller
 			]
 		);
 
-		$locations = new Locations();
+		$locations = new Location();
 		$locations->name = $request->locationsName;
 		$locations->type = $request->locationsType;
 		$locations->parent_id = $request->locationsParent;
@@ -65,7 +65,7 @@ class LocationsController extends Controller
 	public function show($id)
 	{
 		// show a specific location by their id
-		$locations = Locations::find($id);
+		$locations = Location::find($id);
 
 		return view('locations.show', [
 			'locations' => $locations
@@ -80,7 +80,7 @@ class LocationsController extends Controller
 	 */
 	public function edit($id)
 	{
-		$locations = Locations::find($id);
+		$locations = Location::find($id);
 
 		return view('locations.update', [
 			'locations' => $locations
@@ -103,7 +103,7 @@ class LocationsController extends Controller
 				'locationsType' => 'required',
 			]
 		);
-		$locations = Locations::find($id);
+		$locations = Location::find($id);
 
 		$locations->name = request('locationsName');
 		$locations->type = request('locationsType');
@@ -122,7 +122,7 @@ class LocationsController extends Controller
 	public function destroy($id)
 	{
 		// delete a particular location by their id's
-		$locations = Locations::findOrFail($id);
+		$locations = Location::findOrFail($id);
 		$locations->delete();
 		return redirect('/locations');
 	}
@@ -134,7 +134,7 @@ class LocationsController extends Controller
 	public static function findTypeParent(Request $request)
     {
         // get all the data of locations table where its id equals to id-1
-        $data = Locations::select('name', 'id')->where('type',
+        $data = Location::select('name', 'id')->where('type',
             $request->id-1)->take(100)->get();
         return response()->json($data);
     }

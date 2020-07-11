@@ -24,7 +24,7 @@ Locations: Update
 		<div class="form-group">
 			<label for="locationsType">Type</label>
 			<select id="locationsType" class="form-control" name="locationsType">
-				<option selected value="{{$locations->type}}">{{App\Locations::getType($locations->type)}}</option>
+				<option selected value="{{$locations->type}}">{{App\Location::getType($locations->type)}}</option>
 				<option value="0">Campus</option>
 				<option value="1">Building</option>
 				<option value="2">Room</option>
