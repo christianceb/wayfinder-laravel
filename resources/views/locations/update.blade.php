@@ -14,7 +14,7 @@ Locations: Update
 
 		<div class="form-group">
 			<label for="locationsName">Name</label>
-			<input type="text" id="locationsName" name="locationsName" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.."
+			<input type="text" id="locationsName" name="name" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.."
 				value="{{$locations->name}}">
 			<small id="locationsHelp" class="form-text text-muted">
 				Locations Name can not be longer than 50 character.
@@ -23,7 +23,7 @@ Locations: Update
 
 		<div class="form-group">
 			<label for="locationsType">Type</label>
-			<select id="locationsType" class="form-control" name="locationsType">
+			<select id="locationsType" class="form-control" name="type">
 				<option selected value="{{$locations->type}}">{{App\Location::getType($locations->type)}}</option>
 				<option value="0">Campus</option>
 				<option value="1">Building</option>
@@ -36,7 +36,7 @@ Locations: Update
 
         <div class="form-group">
             <label for="locationsParent">Located At</label>
-            <select id="locationsParent" class="form-control" name="locationsParent">
+            <select id="locationsParent" class="form-control" name="parent_id">
                 @if(isset($locations->parent))
                     <option selected value="{{$locations->parent_id}}">{{$locations->parent->name}}</option>
                 @endif
@@ -44,7 +44,7 @@ Locations: Update
         </div>
 
 		<button type="submit" class="btn btn-primary">Submit</button>
-		<a href="{{url('/locations')}}" class="btn btn-danger">Cancel</a>
+		<a href="{{ route('locations.index') }}" class="btn btn-danger">Cancel</a>
 	</form>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
