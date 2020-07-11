@@ -17,6 +17,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ route('uploads.index') }}">Uploads</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('users.index') }}">Users</a>
+          </li>
         </ul>
       @endauth
 
