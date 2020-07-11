@@ -43,9 +43,9 @@ Locations: Browse
 							Edit
 						</a>
 
-						<button type="submit" class="btn btn-danger">
-							Delete
-						</button>
+						<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>                
+
+						<script></script>
 					</form>
 				</td>
 			</tr>

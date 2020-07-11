@@ -34,14 +34,13 @@
             <td>{{ $event->start }}</td>
             <td>{{ $event->end }}</td>
             <td>
-
-                <form action="{{route('events.destroy', $event->ID)}}" method="post">
-                @csrf
+            <form action="{{ route('events.destroy',$event->ID) }}" method="POST" >
+            @csrf
                 @method('DELETE')
-                <a class="btn btn-info" href="{{url("/events/{$event->ID}")}}">Show</a>
-                <a class="btn btn-primary" href="{{url("/events/{$event->ID}/edit")}}">Edit</a>
+                <a class="btn btn-info" href="{{route('events.show', $event->ID)}}">Show</a>
+                <a class="btn btn-primary" href="{{route('events.edit', $event->ID)}}">Edit</a>
 
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>                
                 </form>
             </td>
         </tr>

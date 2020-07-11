@@ -21,8 +21,8 @@ class Events extends Migration
             $table->datetime('start')->nullable(false);
             $table->datetime('end')->nullable(false);
             $table->string('location')->nullable(false);
-            $table->datetime('created_at');
-            $table->datetime('updated_at');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

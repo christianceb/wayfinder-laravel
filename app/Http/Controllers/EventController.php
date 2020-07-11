@@ -48,7 +48,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->validate([
+        $request->validate([
             'title' => 'required',
             'description' => 'required',
             'start' => 'required',
@@ -56,8 +56,15 @@ class EventController extends Controller
             'location' => 'required'
         ]);
 
-        events::create($data);
+        $event = new events([
+            'title' => $request->get('title'),
+            'description' => $request->get('description'),
+            'end' => $request->get('end'),
+            'start' => $request->get('start'),
+            'location' => $request->get('location'),
+        ]);
 
+        $event->save();
         return redirect()->route('events.index')
             ->with('success', 'Event created');
     }
@@ -98,15 +105,21 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $data = $request->validate([
+         $request->validate([
             'title' => 'required',
             'description' => 'required',
             'start' => 'required',
             'end' => 'required',
             'location' => 'required'
         ]);
-        $events = events::whereId($id);
-        $events->update($data);
+        $events = events::find($id);
+        $events->title = $request->get('title');
+        $events->description = $request->get('description');
+        $events->start = $request->get('start');
+        $events->end = $request->get('end');
+        $events->location = $request->get('location');
+  
+        $events->update();
 
         return redirect()->route('events.index')
             ->with('success', 'Event update ');
