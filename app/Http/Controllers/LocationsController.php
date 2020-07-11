@@ -15,9 +15,8 @@ class LocationsController extends Controller
 	public function index()
 	{
 		// show all items inside Locations Table
-		$allLocations = Locations::all();
 		return view('locations.index', [
-			'Locations' => $allLocations
+			'Locations' => Locations::all()
 		]);
 	}
 
@@ -51,6 +50,7 @@ class LocationsController extends Controller
 		$locations = new Locations();
 		$locations->name = $request->locationsName;
 		$locations->type = $request->locationsType;
+		$locations->parent_id = $request->locationsParent;
 		$locations->save();
 
 		return redirect('/locations')->with('success', 'Location created successfully.');
@@ -66,6 +66,7 @@ class LocationsController extends Controller
 	{
 		// show a specific location by their id
 		$locations = Locations::find($id);
+
 		return view('locations.show', [
 			'locations' => $locations
 		]);
@@ -80,6 +81,7 @@ class LocationsController extends Controller
 	public function edit($id)
 	{
 		$locations = Locations::find($id);
+
 		return view('locations.update', [
 			'locations' => $locations
 		]);
@@ -105,6 +107,7 @@ class LocationsController extends Controller
 
 		$locations->name = request('locationsName');
 		$locations->type = request('locationsType');
+		$locations->parent_id = request('locationsParent');
 		$locations->save();
 
 		return redirect('/locations/' . $id)->with('success', 'Location updated successfully.');
@@ -123,4 +126,16 @@ class LocationsController extends Controller
 		$locations->delete();
 		return redirect('/locations');
 	}
+
+	/**
+     *  find the type of the parent
+     *
+     */
+	public static function findTypeParent(Request $request)
+    {
+        // get all the data of locations table where its id equals to id-1
+        $data = Locations::select('name', 'id')->where('type',
+            $request->id-1)->take(100)->get();
+        return response()->json($data);
+    }
 }
