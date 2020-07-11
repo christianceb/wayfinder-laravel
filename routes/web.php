@@ -25,11 +25,14 @@ Auth::routes([
     'verify' => false
 ]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('/events', 'EventController');
+    Route::resource('/uploads', 'UploadsController');
+    Route::resource('/locations', 'LocationsController');
 
-Route::resource('/events', 'EventController');
-Route::resource('/uploads', 'UploadsController');
-Route::resource('/locations', 'LocationsController');
+    // Users collection has no capability to delete anything
+    Route::resource('/users', 'UsersController', ['except' => ['destroy']]);
+});
 
 // Route::get('/locations', 'LocationsController@index')->name('home');
 // Route::post('/locations', 'LocationsController@store');

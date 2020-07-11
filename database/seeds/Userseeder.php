@@ -14,9 +14,9 @@ class UserSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            ['email' => 'j393554@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
-            ['email' => 'j393430@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
-            ['email' => '20026909@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')]
+            ['name'=> 'Chris', 'email' => 'j393554@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
+            ['name'=> 'Marcus', 'email' => 'j393430@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')],
+            ['name'=> 'Lanang', 'email' => '20026909@tafe.wa.edu.au', 'password' => Hash::make('mangoes4u5only')]
         ]);
     }
 }
