@@ -108,14 +108,16 @@ class LocationsController extends Controller
 			'parent' => ['nullable', 'numeric', 'gt:0']
 		]);
 
-		$location->fill(request('name'));
-		$location->fill(request('type'));
+        $location->fill([
+            'name' => request('name'),
+            'type' => request('type')
+        ]);
 
 		// Top level type do not have parents. For some reason, if type is set to 0, it still remembers
 		// its old value, what? even the browser request doesnt have this set that Laravel has its own
 		// mind!
-		$location->parent_id = $location->type > 0 ? request('parent') : null;
-		
+		$location->parent_id = $location->type > 0 ? request('parent_id') : null;
+
 		$location->save();
 
 		return redirect(route('locations.show', $location))->with('success', 'Location updated successfully.');
