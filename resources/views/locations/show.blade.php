@@ -21,6 +21,14 @@ Locations: Show
 				<th scope="col" class="text-primary">Type</th>
 				<td>{{App\Locations::getType($locations->type)}}</td>
 			</tr>
+            <tr>
+                <th scope="col" class="text-primary">Located At</th>
+                @if(isset($locations->parent))
+                    <td>{{$locations->parent->name}}</td>
+                @else
+                    <td>{{$locations->name}}</td>
+                @endif
+            </tr>
 			<tr>
 				<th scope="col" class="text-primary">Created</th>
 				<td>{{$locations->created_at}}</td>
