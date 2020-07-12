@@ -99,7 +99,7 @@ class LocationsController extends Controller
 			]
 		);
         $location->fill(request(['name']));
-        $location->fill(request(['type']));
+        $location->getAttributes()['type'];
         $location->fill(request(['parent_id']));
 		$location->save();
 

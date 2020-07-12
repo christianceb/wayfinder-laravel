@@ -10,7 +10,6 @@ Locations: Create
 
 	<form action="/locations" method="post">
 		@csrf
-		@method('post')
 
 		<div class="form-group">
 			<label for="locationsName">Name</label>

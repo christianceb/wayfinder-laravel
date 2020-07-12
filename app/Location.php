@@ -9,6 +9,7 @@ class Location extends Model
 	protected $fillable = [
 		'name', 'type', 'parent_id'
 	];
+
 	// Accessor function from: https://laravel.com/docs/7.x/eloquent-mutators
 	public function getTypeAttribute($value)
 	{
