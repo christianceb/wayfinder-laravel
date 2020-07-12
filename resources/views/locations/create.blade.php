@@ -14,7 +14,7 @@ Locations: Create
 
 		<div class="form-group">
 			<label for="locationsName">Name</label>
-			<input type="text" id="locationsName" name="locationsName" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.." value="">
+			<input type="text" id="locationsName" name="name" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.." value="">
 			<small id="locationsHelp" class="form-text text-muted">
 				Locations Name can not be longer than 50 character.
 			</small>
@@ -22,7 +22,7 @@ Locations: Create
 
 		<div class="form-group">
 			<label for="locationsType">Type</label>
-			<select id="locationsType" class="form-control" name="locationsType">
+			<select id="locationsType" class="form-control" name="type">
 				<option selected disabled="true">Choose...</option>
 				<option value="0">Campus</option>
 				<option value="1">Building</option>
@@ -35,7 +35,7 @@ Locations: Create
 
         <div class="form-group">
             <label for="locationsParent">Located At</label>
-            <select id="locationsParent" class="form-control" name="locationsParent">
+            <select id="locationsParent" class="form-control" name="parent">
             </select>
         </div>
 

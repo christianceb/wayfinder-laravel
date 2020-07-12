@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Locations extends Model
+class Location extends Model
 {
 	protected $fillable = [
-		'locationsName', 'locationsType'
+		'name', 'type', 'parent_id'
 	];
 	// static function that can be used on blade files
 	// references: https://stackoverflow.com/questions/29007639/laravel-5-call-a-model-function-in-a-blade-view

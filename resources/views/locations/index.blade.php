@@ -8,7 +8,7 @@ Locations: Browse
 <div class="container">
 	<h1 class="text-center">Browse Locations</h1>
 	<div class="mt-3 mb-3">
-		<a href="{{url("/locations/create")}}" class="btn btn-success">
+		<a href="{{ route('locations.create') }}" class="btn btn-success">
 			Create
 		</a>
 	</div>
@@ -29,7 +29,7 @@ Locations: Browse
                     <td>{{$location->id}}</td>
                     <td>{{$location->name}}</td>
                     <td>
-                        {{App\Locations::getType($location->type)}}
+                        {{App\Location::getType($location->type)}}
                     </td>
                     @if(isset($location->parent))
                         <td>{{$location->parent->name}}</td>
@@ -40,12 +40,11 @@ Locations: Browse
                         <form action="/locations/{{$location->id}}" method="post">
                             @csrf
                             @method('delete')
-
-                            <a href="{{url("/locations/{$location->id}")}}" class="btn btn-info">
+                            <a href="{{ route('locations.show', $location) }}" class="btn btn-info">
                                 Show
                             </a>
 
-                            <a href="{{url("/locations/{$location->id}/edit")}}" class="btn btn-warning">
+                            <a href="{{ route('locations.edit', $location) }}" class="btn btn-warning">
                                 Edit
                             </a>
                             <button type="submit" class="btn btn-danger">

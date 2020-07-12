@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Locations;
+use App\Location;
 use Illuminate\Http\Request;
 
 class LocationsController extends Controller
@@ -14,9 +14,9 @@ class LocationsController extends Controller
 	 */
 	public function index()
 	{
-		// show all items inside Locations Table
+		// show all items inside Location Table
 		return view('locations.index', [
-			'Locations' => Locations::all()
+			'Locations' => Location::all()
 		]);
 	}
 
@@ -42,18 +42,17 @@ class LocationsController extends Controller
 		// validate the input for subject and description
 		request()->validate(
 			[
-				'locationsName' => ['required', 'max:50'],
-				'locationsType' => 'required',
+				'name' => ['required', 'max:50'],
+				'type' => 'required',
 			]
 		);
-
-		$locations = new Locations();
-		$locations->name = $request->locationsName;
-		$locations->type = $request->locationsType;
-		$locations->parent_id = $request->locationsParent;
+		$locations = new Location();
+		$locations->name = $request->name;
+		$locations->type = $request->type;
+		$locations->parent_id = $request->parent;
 		$locations->save();
 
-		return redirect('/locations')->with('success', 'Location created successfully.');
+		return redirect(route('locations.index'))->with('success', 'Location created successfully.');
 	}
 
 	/**
@@ -62,28 +61,24 @@ class LocationsController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show($id)
+	public function show(Location $location)
 	{
 		// show a specific location by their id
-		$locations = Locations::find($id);
-
 		return view('locations.show', [
-			'locations' => $locations
+			'locations' => $location
 		]);
 	}
 
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param  int  $id
+	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id)
+	public function edit(Location $location)
 	{
-		$locations = Locations::find($id);
-
 		return view('locations.update', [
-			'locations' => $locations
+			'locations' => $location
 		]);
 	}
 
@@ -91,26 +86,24 @@ class LocationsController extends Controller
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request  $request
-	 * @param  int  $id
+	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id)
+	public function update(Location $location)
 	{
 		// update
 		request()->validate(
 			[
-				'locationsName' => ['required', 'max:50'],
-				'locationsType' => 'required',
+				'name' => ['required', 'max:50'],
+				'type' => 'required',
 			]
 		);
-		$locations = Locations::find($id);
+        $location->fill(request(['name']));
+        $location->fill(request(['type']));
+        $location->fill(request(['parent_id']));
+		$location->save();
 
-		$locations->name = request('locationsName');
-		$locations->type = request('locationsType');
-		$locations->parent_id = request('locationsParent');
-		$locations->save();
-
-		return redirect('/locations/' . $id)->with('success', 'Location updated successfully.');
+		return redirect(route('locations.show', $location))->with('success', 'Location updated successfully.');
 	}
 
 	/**
@@ -122,9 +115,9 @@ class LocationsController extends Controller
 	public function destroy($id)
 	{
 		// delete a particular location by their id's
-		$locations = Locations::findOrFail($id);
+		$locations = Location::findOrFail($id);
 		$locations->delete();
-		return redirect('/locations');
+		return redirect(route('locations.index'));
 	}
 
 	/**
@@ -134,7 +127,7 @@ class LocationsController extends Controller
 	public static function findTypeParent(Request $request)
     {
         // get all the data of locations table where its id equals to id-1
-        $data = Locations::select('name', 'id')->where('type',
+        $data = Location::select('name', 'id')->where('type',
             $request->id-1)->take(100)->get();
         return response()->json($data);
     }
