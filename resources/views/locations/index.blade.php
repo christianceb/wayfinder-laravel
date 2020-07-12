@@ -24,7 +24,7 @@ Locations: Browse
 			</tr>
 		</thead>
 		<tbody>
-			@foreach($Locations as $location)
+			@foreach($locations as $location)
                 <tr>
                     <td>{{$location->id}}</td>
                     <td>{{$location->name}}</td>

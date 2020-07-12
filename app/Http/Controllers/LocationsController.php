@@ -4,9 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class LocationsController extends Controller
 {
+	public $types = [
+		"Campus",
+		"Building",
+		"Room"
+	];
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -16,7 +24,7 @@ class LocationsController extends Controller
 	{
 		// show all items inside Location Table
 		return view('locations.index', [
-			'Locations' => Location::all()
+			'locations' => Location::all()
 		]);
 	}
 
@@ -27,8 +35,9 @@ class LocationsController extends Controller
 	 */
 	public function create()
 	{
-		//
-		return view('locations.create');
+		return view('locations.create', [
+			'types' => $this->types
+		]);
 	}
 
 	/**
@@ -40,17 +49,18 @@ class LocationsController extends Controller
 	public function store(Request $request)
 	{
 		// validate the input for subject and description
-		request()->validate(
-			[
-				'name' => ['required', 'max:50'],
-				'type' => 'required',
-			]
-		);
-		$locations = new Location();
-		$locations->name = $request->name;
-		$locations->type = $request->type;
-		$locations->parent_id = $request->parent;
-		$locations->save();
+
+		request()->validate([
+			'name' => ['required', 'max:50'],
+			'type' => 'required',
+			'parent' => ['nullable', 'numeric', 'gt:0']
+		]);
+
+		$location = new Location();
+		$location->name = $request->name;
+		$location->type = $request->type;
+		$location->parent_id = $location->type > 0 ? $request->parent : null;
+		$location->save();
 
 		return redirect(route('locations.index'))->with('success', 'Location created successfully.');
 	}
@@ -65,7 +75,7 @@ class LocationsController extends Controller
 	{
 		// show a specific location by their id
 		return view('locations.show', [
-			'locations' => $location
+			'location' => $location
 		]);
 	}
 
@@ -78,7 +88,8 @@ class LocationsController extends Controller
 	public function edit(Location $location)
 	{
 		return view('locations.update', [
-			'locations' => $location
+			'location' => $location,
+			'types' => $this->types
 		]);
 	}
 
@@ -91,16 +102,20 @@ class LocationsController extends Controller
 	 */
 	public function update(Location $location)
 	{
-		// update
-		request()->validate(
-			[
-				'name' => ['required', 'max:50'],
-				'type' => 'required',
-			]
-		);
-        $location->fill(request(['name']));
-        $location->fill(request(['type']));
-        $location->fill(request(['parent_id']));
+		request()->validate([
+			'name' => ['required', 'max:50'],
+			'type' => 'required',
+			'parent' => ['nullable', 'numeric', 'gt:0']
+		]);
+
+		$location->fill(request('name'));
+		$location->fill(request('type'));
+
+		// Top level type do not have parents. For some reason, if type is set to 0, it still remembers
+		// its old value, what? even the browser request doesnt have this set that Laravel has its own
+		// mind!
+		$location->parent_id = $location->type > 0 ? request('parent') : null;
+		
 		$location->save();
 
 		return redirect(route('locations.show', $location))->with('success', 'Location updated successfully.');
@@ -115,20 +130,42 @@ class LocationsController extends Controller
 	public function destroy($id)
 	{
 		// delete a particular location by their id's
-		$locations = Location::findOrFail($id);
-		$locations->delete();
+		$location = Location::findOrFail($id);
+		$location->delete();
 		return redirect(route('locations.index'));
 	}
 
 	/**
-     *  find the type of the parent
-     *
-     */
-	public static function findTypeParent(Request $request)
-    {
-        // get all the data of locations table where its id equals to id-1
-        $data = Location::select('name', 'id')->where('type',
-            $request->id-1)->take(100)->get();
-        return response()->json($data);
-    }
+	 *  Get locations whose type is given
+	 */
+	public function byType($type)
+	{
+		$status = Response::HTTP_BAD_REQUEST;
+		$content = [];
+
+		// Validate
+		$values = ['type' => $type];
+		$validator = Validator::make($values, [
+			'type' => ['numeric', 'min:0', 'max:2'] // Because 2 is our highest type
+		] );
+
+		// Validation successful
+		if (!$validator->fails()) {
+			$locations = Location::select('name', 'id')
+				->where('type', $type)
+				->get();
+
+			// Throw 404 if we have nothing
+			$status = $locations->isNotEmpty() ? Response::HTTP_OK : Response::HTTP_NOT_FOUND;
+
+			// Pass collections into an array in response
+			if ($locations->isNotEmpty()) {
+				$content['locations'] = $locations;
+			}
+		}
+
+		$content['message'] = Response::$statusTexts[$status];
+
+		return response()->json($content, $status);
+	}
 }

@@ -11,36 +11,36 @@ Locations: Show
 		<tbody>
 			<tr>
 				<th scope="col" class="text-primary">Id</th>
-				<td>{{$locations->id}}</td>
+				<td>{{$location->id}}</td>
 			<tr>
 			<tr>
 				<th scope="col" class="text-primary">Name</th>
-				<td>{{$locations->name}}</td>
+				<td>{{$location->name}}</td>
 			<tr>
 			<tr>
 				<th scope="col" class="text-primary">Type</th>
-				<td>{{App\Location::getType($locations->type)}}</td>
+				<td>{{App\Location::getType($location->type)}}</td>
 			</tr>
             <tr>
                 <th scope="col" class="text-primary">Located At</th>
-                @if(isset($locations->parent))
-                    <td>{{$locations->parent->name}}</td>
+                @if(isset($location->parent))
+                    <td>{{$location->parent->name}}</td>
                 @else
-                    <td>{{$locations->name}}</td>
+                    <td>{{$location->name}}</td>
                 @endif
             </tr>
 			<tr>
 				<th scope="col" class="text-primary">Created</th>
-				<td>{{$locations->created_at}}</td>
+				<td>{{$location->created_at}}</td>
 			</tr>
 			<tr>
 				<th scope="col" class="text-primary">Updated</th>
-				<td>{{$locations->updated_at}}</td>
+				<td>{{$location->updated_at}}</td>
 			</tr>
 		</tbody>
 	</table>
 	<div>
-		<form action="/locations/{{$locations->id}}" method="post">
+		<form action="/locations/{{$location->id}}" method="post">
 			@csrf
 			@method('delete')
 
@@ -48,7 +48,7 @@ Locations: Show
 				Back
 			</a>
 
-			<a href="{{url("/locations/{$locations->id}/edit")}}" class="btn btn-warning">
+			<a href="{{url("/locations/{$location->id}/edit")}}" class="btn btn-warning">
 				Edit
 			</a>
 
