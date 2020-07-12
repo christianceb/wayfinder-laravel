@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\Console\Input\Input;
 use App\Events;
 
 class EventController extends Controller
@@ -16,10 +14,9 @@ class EventController extends Controller
      */
     public function index()
     {
-        //    
-
         $events = Events::all();
-        return view('events.Event_index', ['events' => $events]);
+        
+        return view('events.index', ['events' => $events]);
     }
 
     /**
@@ -31,7 +28,7 @@ class EventController extends Controller
     {
         //
 
-        return view('events.Event_create');
+        return view('events.create');
     }
 
     /**
@@ -66,7 +63,8 @@ class EventController extends Controller
     {
         //
         $events = Events::find($id);
-        return view('events.Event_show', ['events' => $events]);
+
+        return view('events.show', ['events' => $events]);
     }
 
     /**
@@ -79,7 +77,8 @@ class EventController extends Controller
     {
         //
         $events = Events::find($id);
-        return view('events.Event_edit', ['events' => $events]);
+
+        return view('events.edit', ['events' => $events]);
     }
 
     /**
