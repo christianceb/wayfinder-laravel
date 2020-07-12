@@ -14,9 +14,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Events::all();
-        
-        return view('events.index', ['events' => $events]);
+        return view('events.index', ['events' => Events::all()]);
     }
 
     /**
@@ -59,10 +57,9 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Events $events)
     {
         //
-        $events = Events::find($id);
 
         return view('events.show', ['events' => $events]);
     }
@@ -73,10 +70,9 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Events $events)
     {
         //
-        $events = Events::find($id);
 
         return view('events.edit', ['events' => $events]);
     }
@@ -88,18 +84,12 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Events $events)
     {
         //
-        $data = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'start' => 'required',
-            'end' => 'required',
-            'location' => 'required'
-        ]);
-        $events = Events::whereId($id);
-        $events->update($data);
+        $this->request()->all()->validate();
+
+        $events->save();
 
         return redirect()->route('events.index')
             ->with('success', 'Event update ');
@@ -111,9 +101,8 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Events $events)
     {
-        $events = Events::whereId($id);
         $events->delete();
 
         return redirect()->route('events.index')->with('success', 'Event deleted');
