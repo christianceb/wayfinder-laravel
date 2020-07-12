@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\Console\Input\Input;
+use Illuminate\Support\Facades\Validator;
 use App\events;
 
 class EventController extends Controller
@@ -17,9 +16,7 @@ class EventController extends Controller
     public function index()
     {
         //    
-
-        $events = events::all();
-        return view('events.Event_index', ['events' => $events]);
+        return view('events.Event_index', ['events' => events::all()]);
     }
 
     /**
@@ -43,15 +40,10 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'start' => 'required',
-            'end' => 'required',
-            'location' => 'required'
-        ]);
 
-        events::create($data);
+        $this->validator($request->all())->validate();
+
+        $this->createEvent($request->all());
 
         return redirect()->route('events.index')
             ->with('success', 'Event created');
@@ -63,10 +55,9 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(events $events)
     {
         //
-        $events = events::find($id);
         return view('events.Event_show', ['events' => $events]);
     }
 
@@ -76,10 +67,9 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(events $events)
     {
         //
-        $events = events::find($id);
         return view('events.Event_edit', ['events' => $events]);
     }
 
@@ -90,21 +80,20 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(events $events)
     {
         //
-        $data = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'start' => 'required',
-            'end' => 'required',
-            'location' => 'required'
-        ]);
-        $events = events::whereId($id);
-        $events->update($data);
+        $this->validator(request()->all())->validate();
+    
+        $events->fill(request(["title"]));
+        $events->description = request('description');
+        $events->start = request('start');
+        $events->end = request('end');
+        $events->location = request('location');
+        $events->save();
 
         return redirect()->route('events.index')
-            ->with('success', 'Event update ');
+            ->with('success', 'Event updated');
     }
 
     /**
@@ -122,4 +111,39 @@ class EventController extends Controller
         return redirect()->route('events.index')
             ->with('success', 'Event deleted');
     }
+
+    protected function validator(array $data)
+    {
+        $rules = [
+            'title' => ['required', 'string', 'max:50'],
+            'description' => ['required', 'string', 'max:255',],
+            'start' => ['required', 'date_format:"Y-m-d\TH:i"'],
+            'end' => ['required', 'date_format:"Y-m-d\TH:i"'],
+        ];
+
+        switch(request()->getMethod()){
+            case "POST":
+                $rules['location'] = ['required', 'string', 'max:50'];
+                break;
+
+            default:
+                break;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    protected function createEvent(array $data)
+    {
+        return events::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start' => $data['start'],
+            'end' => $data['end'],
+            'location' => $data['location']
+        ]);
+    }
 }
+
+
+
