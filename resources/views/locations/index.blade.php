@@ -8,7 +8,7 @@ Locations: Browse
 <div class="container">
 	<h1 class="text-center">Browse Locations</h1>
 	<div class="mt-3 mb-3">
-		<a href="{{url("/locations/create")}}" class="btn btn-success">
+		<a href="{{ route('locations.create') }}" class="btn btn-success">
 			Create
 		</a>
 	</div>
@@ -19,36 +19,40 @@ Locations: Browse
 				<th scope="col">Id</th>
 				<th scope="col">Name</th>
 				<th scope="col">Type</th>
+                <th scope="col">Located At</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
-			@foreach($Locations as $location)
-			<tr>
-				<td>{{$location->id}}</td>
-				<td>{{$location->name}}</td>
-				<td>
-					{{App\Locations::getType($location->type)}}
-				</td>
-				<td>
-					<form action="/locations/{{$location->id}}" method="post">
-						@csrf
-						@method('delete')
+			@foreach($locations as $location)
+                <tr>
+                    <td>{{$location->id}}</td>
+                    <td>{{$location->name}}</td>
+                    <td>
+                        {{App\Location::getType($location->type)}}
+                    </td>
+                    @if(isset($location->parent))
+                        <td>{{$location->parent->name}}</td>
+                    @else
+                        <td>{{$location->name}}</td>
+                    @endif
+                    <td>
+                        <form action="/locations/{{$location->id}}" method="post">
+                            @csrf
+                            @method('delete')
+                            <a href="{{ route('locations.show', $location) }}" class="btn btn-info">
+                                Show
+                            </a>
 
-						<a href="{{url("/locations/{$location->id}")}}" class="btn btn-info">
-							Show
-						</a>
-
-						<a href="{{url("/locations/{$location->id}/edit")}}" class="btn btn-warning">
-							Edit
-						</a>
-
-						<button type="submit" class="btn btn-danger">
-							Delete
-						</button>
-					</form>
-				</td>
-			</tr>
+                            <a href="{{ route('locations.edit', $location) }}" class="btn btn-warning">
+                                Edit
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
 			@endforeach
 		</tbody>
 	</table>

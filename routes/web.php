@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,16 +18,21 @@ Route::get('/', function() {
     return view('welcome');
 });
 
+// Disable planned routes
+Auth::routes([
+    'register' => false,
+    'reset' => false,
+    'verify' => false
+]);
 
-Route::resource('/events', 'EventController');
-Route::resource('/uploads', 'UploadsController');
-Route::resource('/locations', 'LocationsController');
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('/events', 'EventController');
+    Route::resource('/uploads', 'UploadsController');
 
-Route::get('/locations', 'LocationsController@index')->name('home');
-Route::post('/locations', 'LocationsController@store');
-Route::get('/locations /create', 'LocationsController@create');
-Route::get('/locations /{locations}', 'LocationsController@show');
-Route::get('/locations /{locations} /edit', 'LocationsController@edit');
-Route::put('/locations /{locations}', 'LocationsController@update');
-Route::patch('/locations /{locations}', 'LocationsController@update');
-Route::delete('/locations /{locations}', 'LocationsController@destroy');
+    // Locations resource and then some
+    Route::get('/locations/type/{type?}', 'LocationsController@byType')->name('locations.type');
+    Route::resource('/locations', 'LocationsController');
+
+    // Users collection has no capability to delete anything
+    Route::resource('/users', 'UsersController', ['except' => ['destroy']]);
+});

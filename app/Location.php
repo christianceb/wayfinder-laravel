@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Locations extends Model
+class Location extends Model
 {
 	protected $fillable = [
-		'locationsName', 'locationsType'
+		'name', 'type', 'parent_id'
 	];
 	// static function that can be used on blade files
 	// references: https://stackoverflow.com/questions/29007639/laravel-5-call-a-model-function-in-a-blade-view
@@ -25,4 +25,15 @@ class Locations extends Model
 				break;
 		}
 	}
+
+    public function children()
+    {
+        return $this->hasOne(self::class, 'id', 'parent_id');
+    }
+    // using eloquent self-join to get the id and the parent_id matches
+    // this method will be called to retrieve the name of the parent
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id', 'id');
+    }
 }

@@ -53,9 +53,7 @@ class EventController extends Controller
         
         Events::create($data);
         
-        return redirect()->route('events.index')
-        ->with('success', 'Event created');
-
+        return redirect()->route('events.index')->with('success', 'Event created');
     }
 
     /**
@@ -116,11 +114,9 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-        
         $events = Events::whereId($id);
         $events->delete();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event deleted');
+        return redirect()->route('events.index')->with('success', 'Event deleted');
     }
 }
