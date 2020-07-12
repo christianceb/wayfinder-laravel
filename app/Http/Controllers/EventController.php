@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Input\Input;
-use App\events;
+use App\Events;
 
 class EventController extends Controller
 {
@@ -18,7 +18,7 @@ class EventController extends Controller
     {
         //    
 
-        $events = events::all();
+        $events = Events::all();
         return view('events.Event_index', ['events' => $events]);
     }
 
@@ -50,11 +50,10 @@ class EventController extends Controller
             'end' => 'required',
             'location' => 'required'
         ]);
-
-        events::create($data);
-
-        return redirect()->route('events.index')
-            ->with('success', 'Event created');
+        
+        Events::create($data);
+        
+        return redirect()->route('events.index')->with('success', 'Event created');
     }
 
     /**
@@ -66,7 +65,7 @@ class EventController extends Controller
     public function show($id)
     {
         //
-        $events = events::find($id);
+        $events = Events::find($id);
         return view('events.Event_show', ['events' => $events]);
     }
 
@@ -79,7 +78,7 @@ class EventController extends Controller
     public function edit($id)
     {
         //
-        $events = events::find($id);
+        $events = Events::find($id);
         return view('events.Event_edit', ['events' => $events]);
     }
 
@@ -100,7 +99,7 @@ class EventController extends Controller
             'end' => 'required',
             'location' => 'required'
         ]);
-        $events = events::whereId($id);
+        $events = Events::whereId($id);
         $events->update($data);
 
         return redirect()->route('events.index')
@@ -115,11 +114,9 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-
-        $events = events::whereId($id);
+        $events = Events::whereId($id);
         $events->delete();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event deleted');
+        return redirect()->route('events.index')->with('success', 'Event deleted');
     }
 }
