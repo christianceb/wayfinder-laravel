@@ -29,7 +29,7 @@ Locations: Browse
                     <td>{{$location->id}}</td>
                     <td>{{$location->name}}</td>
                     <td>
-                        {{App\Location::getType($location->type)}}
+                        {{$location->type}}
                     </td>
                     @if(isset($location->parent))
                         <td>{{$location->parent->name}}</td>

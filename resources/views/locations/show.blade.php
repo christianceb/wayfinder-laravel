@@ -19,7 +19,7 @@ Locations: Show
 			<tr>
 			<tr>
 				<th scope="col" class="text-primary">Type</th>
-				<td>{{App\Location::getType($locations->type)}}</td>
+				<td>{{$locations->type}}</td>
 			</tr>
             <tr>
                 <th scope="col" class="text-primary">Located At</th>
