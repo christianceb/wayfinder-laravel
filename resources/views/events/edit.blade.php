@@ -22,7 +22,7 @@
         </div>
     @endif
 
-    <form action="{{route('events.update', $events->id)}}" method="post">
+    <form action="{{route('events.update', $events->ID)}}" method="post">
         @csrf
         @method('patch')
 
