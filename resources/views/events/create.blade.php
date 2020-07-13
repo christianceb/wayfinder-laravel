@@ -22,7 +22,7 @@
     </div>
 @endif
 
-<form action="{{route(events.store)}}" method="post">
+<form action="{{route('events.store')}}" method="post">
     @csrf
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
@@ -45,7 +45,7 @@
                 <input class="form-control"  name="location" placeholder="location" />
             </div>
         </div>
-        
+
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Start:</strong>
