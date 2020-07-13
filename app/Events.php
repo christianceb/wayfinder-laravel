@@ -12,6 +12,12 @@ class Events extends Model
         'description',
         'start',
         'end',
-        'location'
+        'location_id'
     ];
+    // one to one relation using eloquent
+    // this means location_id column in event model belongs to id of location class
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
 }

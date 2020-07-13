@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Events;
+use App\Location;
 
 class EventController extends Controller
 {
@@ -43,11 +44,11 @@ class EventController extends Controller
             'description' => 'required',
             'start' => 'required',
             'end' => 'required',
-            'location' => 'required'
+            'location_id' => 'required'
         ]);
-        
+
         Events::create($data);
-        
+
         return redirect()->route('events.index')->with('success', 'Event created');
     }
 
@@ -59,8 +60,6 @@ class EventController extends Controller
      */
     public function show(Events $events)
     {
-        //
-
         return view('events.show', ['events' => $events]);
     }
 
@@ -72,9 +71,10 @@ class EventController extends Controller
      */
     public function edit(Events $events)
     {
-        //
-
-        return view('events.edit', ['events' => $events]);
+        return view('events.edit', [
+            'events' => $events,
+            'locations' => Location::all()
+        ]);
     }
 
     /**
