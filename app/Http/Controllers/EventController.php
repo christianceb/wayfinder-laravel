@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Events;
 use Illuminate\Support\Facades\Validator;
-use App\events;
+use Illuminate\Support\Carbon;
+
 
 class EventController extends Controller
 {
@@ -15,8 +17,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        //    
-        return view('events.Event_index', ['events' => events::all()]);
+        //      
+        return view('events.Event_index', ['events' => Events::all()]);
     }
 
     /**
@@ -40,13 +42,10 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
-
         $this->validator($request->all())->validate();
+        $events = $this->createEvents($request->all());
 
-        $this->createEvent($request->all());
-
-        return redirect()->route('events.index')
-            ->with('success', 'Event created');
+        return redirect(route("events.index", $events));
     }
 
     /**
@@ -55,9 +54,11 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(events $events)
+    public function show($id)
     {
         //
+
+        $events = Events::find($id);
         return view('events.Event_show', ['events' => $events]);
     }
 
@@ -67,9 +68,10 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(events $events)
+    public function edit($id)
     {
         //
+        $events = events::find($id);
         return view('events.Event_edit', ['events' => $events]);
     }
 
@@ -82,18 +84,19 @@ class EventController extends Controller
      */
     public function update(events $events)
     {
-        //
-        $this->validator(request()->all())->validate();
     
-        $events->fill(request(["title"]));
-        $events->description = request('description');
-        $events->start = request('start');
-        $events->end = request('end');
-        $events->location = request('location');
+        $this->validator(request()->all())->validate();
+
+        $events->fill(request(['title']));
+        $events->description = (request('description'));
+        $events->start = (request('start'));
+        $events->end = (request('end'));
+        $events->location = (request('location'));
+
         $events->save();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event updated');
+        return redirect(route("events.show", $events));
+
     }
 
     /**
@@ -104,36 +107,38 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-
-        $events = events::whereId($id);
+        $events = Events::whereId($id);
         $events->delete();
 
         return redirect()->route('events.index')
             ->with('success', 'Event deleted');
     }
-
     protected function validator(array $data)
     {
         $rules = [
             'title' => ['required', 'string', 'max:50'],
-            'description' => ['required', 'string', 'max:255',],
-            'start' => ['required', 'date_format:"Y-m-d\TH:i"'],
-            'end' => ['required', 'date_format:"Y-m-d\TH:i"'],
+            'description' => ['required', 'string', 'max:250'],
+            'start' => [ 'required'],
+            'end' => [ 'required'],
         ];
 
-        switch(request()->getMethod()){
+        switch (request()->getMethod()) {
             case "POST":
                 $rules['location'] = ['required', 'string', 'max:50'];
-                break;
-
-            default:
                 break;
         }
 
         return Validator::make($data, $rules);
     }
 
-    protected function createEvent(array $data)
+    /**
+     * Create a new user instance after a valid registration. This is exactly the same create()
+     * method found in \App\Http\Controllers\Auth\RegisterController
+     *
+     * @param  array  $data
+     * @return \App\Events
+     */
+    protected function createEvents(array $data)
     {
         return events::create([
             'title' => $data['title'],
@@ -144,6 +149,5 @@ class EventController extends Controller
         ]);
     }
 }
-
 
 
