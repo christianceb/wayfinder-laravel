@@ -18,7 +18,7 @@ class EventController extends Controller
     public function index()
     {
         //      
-        return view('events.Event_index', ['events' => Events::all()]);
+        return view('events.index', ['events' => Events::all()]);
     }
 
     /**
@@ -30,7 +30,7 @@ class EventController extends Controller
     {
         //
 
-        return view('events.Event_create');
+        return view('events.create');
     }
 
     /**
@@ -59,8 +59,9 @@ class EventController extends Controller
         //
 
         $events = Events::find($id);
-        return view('events.Event_show', ['events' => $events]);
+        return view('events.show', ['events' => $events]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -72,7 +73,7 @@ class EventController extends Controller
     {
         //
         $events = events::find($id);
-        return view('events.Event_edit', ['events' => $events]);
+        return view('events.edit', ['events' => $events]);
     }
 
     /**
