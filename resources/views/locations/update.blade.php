@@ -6,74 +6,47 @@ Locations: Update
 
 @section('content')
 <div class="container">
-	<h2>Locations: Edit</h2>
+  <h2>Locations: Edit</h2>
+  
+  <form action="/locations/{{$location->id}}" method="post">
+    @csrf
+    @method('patch')
+    
+    <div class="form-group">
+      <label for="locationsName">Name</label>
+      <input type="text" id="locationsName" name="name" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.." value="{{$location->name}}">
+      <small id="locationsHelp" class="form-text text-muted">
+        Locations Name can not be longer than 50 character.
+      </small>
+    </div>
+    
+    <div class="form-group">
+      <label for="locationsType">Type</label>
 
-	<form action="/locations/{{$locations->id}}" method="post">
-		@csrf
-		@method('patch')
+      <select id="locationsType" class="form-control location-type" name="type" data-resource="{{ route("locations.type") }}">
+        @foreach ($types as $index => $type)
+          <option value="{{$index}}" @if($index === $location->type) selected @endif>{{$type}}</option>
+        @endforeach
+      </select>
 
-		<div class="form-group">
-			<label for="locationsName">Name</label>
-			<input type="text" id="locationsName" name="name" class="form-control" aria-describedby="locationsHelp" placeholder="Enter Location name here.."
-				value="{{$locations->name}}">
-			<small id="locationsHelp" class="form-text text-muted">
-				Locations Name can not be longer than 50 character.
-			</small>
-		</div>
+      <small id="locationsHelp" class="form-text text-muted">
+        Locations Type must not be empty.
+      </small>
+    </div>
+    
+    <div class="text-center spinner">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
 
-		<div class="form-group">
-			<label for="locationsType">Type</label>
-			<select id="locationsType" class="form-control" name="type">
-				<option selected value="{{$locations->type}}">{{App\Location::getType($locations->type)}}</option>
-				<option value="0">Campus</option>
-				<option value="1">Building</option>
-				<option value="2">Room</option>
-			</select>
-			<small id="locationsHelp" class="form-text text-muted">
-				Locations Type must not be empty.
-			</small>
-		</div>
-
-        <div class="form-group">
-            <label for="locationsParent">Located At</label>
-            <select id="locationsParent" class="form-control" name="parent_id">
-                @if(isset($locations->parent))
-                    <option selected value="{{$locations->parent_id}}">{{$locations->parent->name}}</option>
-                @endif
-            </select>
-        </div>
-
-		<button type="submit" class="btn btn-primary">Submit</button>
-		<a href="{{ route('locations.index') }}" class="btn btn-danger">Cancel</a>
-	</form>
+    <div class="form-group location-parent">
+      <label>Located At</label>
+      <select class="form-control" name="parent_id" data-original-value="{{$location->parent_id}}" data-current-location="{{$location->id}}"></select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{{ route('locations.index') }}" class="btn btn-danger">Cancel</a>
+  </form>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(document).on('change', '#locationsType', function () {
-            // assign the value of locationsType to typeId
-            var typeId = $(this).val();
-            // assign empty string to parent variable
-            var parent = " ";
-            var div = $(this).parent().parent();
-
-            $.ajax({
-                type:'get',
-                url:'{!!URL::to('findTypeParent')!!}',
-                data:{'id': typeId},
-                success:function (data) {
-                    for (var i=0; i<data.length; i++)
-                    {
-                        parent += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
-                    }
-                    div.find('#locationsParent').html(" ");
-                    div.find('#locationsParent').append(parent);
-                },
-                error:function () {
-                    console.log("data is empty");
-                }
-            });
-        });
-    })
-</script>
 @endsection

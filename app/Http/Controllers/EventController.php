@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Events;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Carbon;
-
+use App\Events;
 
 class EventController extends Controller
 {
@@ -17,7 +15,6 @@ class EventController extends Controller
      */
     public function index()
     {
-        //      
         return view('events.index', ['events' => Events::all()]);
     }
 
@@ -54,11 +51,10 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Events $events)
     {
         //
 
-        $events = Events::find($id);
         return view('events.show', ['events' => $events]);
     }
 
@@ -69,10 +65,9 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Events $events)
     {
         //
-        $events = events::find($id);
         return view('events.edit', ['events' => $events]);
     }
 
@@ -106,13 +101,11 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Events $events)
     {
-        $events = Events::whereId($id);
         $events->delete();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event deleted');
+        return redirect()->route('events.index')->with('success', 'Event deleted');
     }
     protected function validator(array $data)
     {
