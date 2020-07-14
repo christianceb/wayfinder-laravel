@@ -45,21 +45,21 @@
                     <select id="eventLocation" class="form-control" name="location_id" >
                         <option selected disabled>Choose...</option>
                         <optgroup label="Campus">
-                            @foreach($locations->where('type', 0) as $location)
+                            @foreach($locations["campus"] as $location)
                                 <option value="{{$location->id}}"
                                         @if($events->location_id === $location->id) selected @endif>
                                     {{$location->name}}</option>
                             @endforeach
                         </optgroup>
                         <optgroup label="Building">
-                            @foreach($locations->where('type', 1) as $location)
+                            @foreach($locations["building"] as $location)
                                 <option value="{{$location->id}}"
                                         @if($events->location_id === $location->id) selected @endif>
                                     {{$location->name}}</option>
                             @endforeach
                         </optgroup>
                         <optgroup label="Room">
-                            @foreach($locations->where('type', 2) as $location)
+                            @foreach($locations["room"] as $location)
                                 <option value="{{$location->id}}"
                                         @if($events->location_id === $location->id) selected @endif>
                                     {{$location->name}}</option>

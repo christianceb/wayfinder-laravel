@@ -25,9 +25,13 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
-
-        return view('events.create');
+        return view('events.create', [
+            'locations' => [
+                'campus' => Location::where('type', 0)->get(),
+                'building' => Location::where('type', 1)->get(),
+                'room' => Location::where('type', 2)->get()
+            ]
+        ]);
     }
 
     /**
@@ -38,7 +42,6 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $data = $request->validate([
             'title' => 'required',
             'description' => 'required',
@@ -73,7 +76,11 @@ class EventController extends Controller
     {
         return view('events.edit', [
             'events' => $events,
-            'locations' => Location::all()
+            'locations' => [
+                'campus' => Location::where('type', 0)->get(),
+                'building' => Location::where('type', 1)->get(),
+                'room' => Location::where('type', 2)->get()
+            ]
         ]);
     }
 
@@ -86,13 +93,10 @@ class EventController extends Controller
      */
     public function update(Events $events)
     {
-        //
         $this->request()->all()->validate();
-
         $events->save();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event update ');
+        return redirect()->route('events.index')->with('success', 'Event update ');
     }
 
     /**
