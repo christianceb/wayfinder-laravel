@@ -141,3 +141,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+const DeleteHandler = () => {
+  return confirm("Are you sure you want to delete");
+}
+
+const action = document.querySelector('#Confirm-Delete').addEventListener('click', DeleteHandler);

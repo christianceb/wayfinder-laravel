@@ -47,7 +47,7 @@ Locations: Browse
                             <a href="{{ route('locations.edit', $location) }}" class="btn btn-warning">
                                 Edit
                             </a>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" id='Confirm-Delete' class="btn btn-danger">
                                 Delete
                             </button>
                         </form>

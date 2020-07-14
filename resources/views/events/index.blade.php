@@ -41,7 +41,7 @@
                 <a class="btn btn-info" href="{{url("/events/{$event->ID}")}}">Show</a>
                 <a class="btn btn-primary" href="{{url("/events/{$event->ID}/edit")}}">Edit</a>
 
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" id='Confirm-Delete' class="btn btn-danger">Delete</button>
                 </form>
             </td>
         </tr>
