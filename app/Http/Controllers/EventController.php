@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Events;
 
 class EventController extends Controller
@@ -38,17 +39,10 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'start' => 'required',
-            'end' => 'required',
-            'location' => 'required'
-        ]);
-        
-        Events::create($data);
-        
-        return redirect()->route('events.index')->with('success', 'Event created');
+        $this->validator($request->all())->validate();
+        $events = $this->createEvents($request->all());
+
+        return redirect(route("events.index", $events));
     }
 
     /**
@@ -64,6 +58,7 @@ class EventController extends Controller
         return view('events.show', ['events' => $events]);
     }
 
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -73,7 +68,6 @@ class EventController extends Controller
     public function edit(Events $events)
     {
         //
-
         return view('events.edit', ['events' => $events]);
     }
 
@@ -84,15 +78,21 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Events $events)
+    public function update(events $events)
     {
-        //
-        $this->request()->all()->validate();
+    
+        $this->validator(request()->all())->validate();
+
+        $events->fill(request(['title']));
+        $events->description = (request('description'));
+        $events->start = (request('start'));
+        $events->end = (request('end'));
+        $events->location = (request('location'));
 
         $events->save();
 
-        return redirect()->route('events.index')
-            ->with('success', 'Event update ');
+        return redirect(route("events.show", $events));
+
     }
 
     /**
@@ -106,5 +106,40 @@ class EventController extends Controller
         $events->delete();
 
         return redirect()->route('events.index')->with('success', 'Event deleted');
+    }
+    protected function validator(array $data)
+    {
+        $rules = [
+            'title' => ['required', 'string', 'max:50'],
+            'description' => ['required', 'string', 'max:250'],
+            'start' => [ 'required'],
+            'end' => [ 'required'],
+        ];
+
+        switch (request()->getMethod()) {
+            case "POST":
+                $rules['location'] = ['required', 'string', 'max:50'];
+                break;
+        }
+
+        return Validator::make($data, $rules);
+    }
+
+    /**
+     * Create a new user instance after a valid registration. This is exactly the same create()
+     * method found in \App\Http\Controllers\Auth\RegisterController
+     *
+     * @param  array  $data
+     * @return \App\Events
+     */
+    protected function createEvents(array $data)
+    {
+        return events::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start' => $data['start'],
+            'end' => $data['end'],
+            'location' => $data['location']
+        ]);
     }
 }
