@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <h2>Events</h2>
-        <a class="btn btn-primary" href="{{ url('/events/create')}}">Create Event</a>
+        <a class="btn btn-primary" href="{{ route('events.index')}}">Create Event</a>
     </div>
 </div>
 
@@ -35,13 +35,13 @@
             <td>{{ $event->end }}</td>
             <td>
 
-                <form action="{{route('events.destroy', $event->ID)}}" method="post">
+                <form action="{{route('events.destroy', $event->id)}}" method="post">
                 @csrf
                 @method('DELETE')
-                <a class="btn btn-info" href="{{url("/events/{$event->ID}")}}">Show</a>
-                <a class="btn btn-primary" href="{{url("/events/{$event->ID}/edit")}}">Edit</a>
+                <a class="btn btn-info" href="{{route('events.show', $events->id)}}">Show</a>
+                <a class="btn btn-primary" href="{{route('events.edit', $events->id)}}">Edit</a>
 
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" id="Confirm-Delete" class="btn btn-danger">Delete</button>
                 </form>
             </td>
         </tr>
