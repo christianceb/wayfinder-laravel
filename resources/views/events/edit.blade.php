@@ -42,7 +42,30 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Location:</strong>
-                    <input type="text" name="location" value="{{ $events->location }}" class="form-control">
+                    <select id="eventLocation" class="form-control" name="location_id" >
+                        <option selected disabled>Choose...</option>
+                        <optgroup label="Campus">
+                            @foreach($locations["campus"] as $location)
+                                <option value="{{$location->id}}"
+                                        @if($events->location_id === $location->id) selected @endif>
+                                    {{$location->name}}</option>
+                            @endforeach
+                        </optgroup>
+                        <optgroup label="Building">
+                            @foreach($locations["building"] as $location)
+                                <option value="{{$location->id}}"
+                                        @if($events->location_id === $location->id) selected @endif>
+                                    {{$location->name}}</option>
+                            @endforeach
+                        </optgroup>
+                        <optgroup label="Room">
+                            @foreach($locations["room"] as $location)
+                                <option value="{{$location->id}}"
+                                        @if($events->location_id === $location->id) selected @endif>
+                                    {{$location->name}}</option>
+                            @endforeach
+                        </optgroup>
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">

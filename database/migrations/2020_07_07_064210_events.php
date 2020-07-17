@@ -14,14 +14,13 @@ class Events extends Migration
      */
     public function up()
     {
-        //
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50);
             $table->string('description', 255);
             $table->datetime('start');
             $table->datetime('end');
-            $table->string('location', 50);
+            $table->unsignedInteger('location_id')->nullable(false);
             $table->timestamp("created_at")->default(DB::raw("CURRENT_TIMESTAMP"));
             $table->timestamp("updated_at")->default(DB::raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
         });

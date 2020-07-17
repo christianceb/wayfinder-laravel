@@ -22,7 +22,7 @@
     </div>
 @endif
 
-<form action="{{route(events.store)}}" method="post">
+<form action="{{route('events.store')}}" method="post">
     @csrf
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
@@ -42,10 +42,27 @@
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Location:</strong>
-                <input class="form-control"  name="location" placeholder="location" />
+                <select id="eventLocation" class="form-control" name="location_id" >
+                    <option selected disabled>Choose...</option>
+                    <optgroup label="Campus">
+                        @foreach($locations["campus"] as $location)
+                            <option value="{{$location->id}}">{{$location->name}}</option>
+                        @endforeach
+                    </optgroup>
+                    <optgroup label="Building">
+                        @foreach($locations["building"] as $location)
+                            <option value="{{$location->id}}">{{$location->name}}</option>
+                        @endforeach
+                    </optgroup>
+                    <optgroup label="Room">
+                        @foreach($locations["room"] as $location)
+                            <option value="{{$location->id}}">{{$location->name}}</option>
+                        @endforeach
+                    </optgroup>
+                </select>
             </div>
         </div>
-        
+
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Start:</strong>
