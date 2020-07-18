@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Events;
+use App\Event;
 use App\Location;
 
 class EventsController extends Controller
@@ -15,7 +15,7 @@ class EventsController extends Controller
      */
     public function index()
     {
-        return view('events.index', ['events' => Events::all()]);
+        return view('events.index', ['events' => Event::all()]);
     }
 
     /**
@@ -42,17 +42,9 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'start' => 'required',
-            'end' => 'required',
-            'location_id' => 'required'
-        ]);
+        $event = Event::create($this->validator());
 
-        Events::create($data);
-
-        return redirect()->route('events.index')->with('success', 'Event created');
+        return redirect()->route('events.show', $event);
     }
 
     /**
@@ -61,9 +53,9 @@ class EventsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Events $events)
+    public function show(Event $event)
     {
-        return view('events.show', ['events' => $events]);
+        return view('events.show', ['events' => $event]);
     }
 
     /**
@@ -72,10 +64,10 @@ class EventsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Events $events)
+    public function edit(Event $event)
     {
         return view('events.edit', [
-            'events' => $events,
+            'events' => $event,
             'locations' => [
                 'campus' => Location::where('type', 0)->get(),
                 'building' => Location::where('type', 1)->get(),
@@ -91,10 +83,9 @@ class EventsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Events $events)
+    public function update(Event $event)
     {
-        $this->request()->all()->validate();
-        $events->save();
+        $event->update($this->validator());
 
         return redirect()->route('events.index')->with('success', 'Event update ');
     }
@@ -105,10 +96,21 @@ class EventsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Events $events)
+    public function destroy(Event $event)
     {
-        $events->delete();
+        $event->delete();
 
         return redirect()->route('events.index')->with('success', 'Event deleted');
+    }
+
+    protected function validator()
+    {
+        return request()->validate([
+            'title' => ['required', 'max:50'],
+            'description' => ['required', 'max:250'],
+            'start' => ['required'],
+            'end' => ['required'],
+            'location_id' => ['required']
+        ]);
     }
 }

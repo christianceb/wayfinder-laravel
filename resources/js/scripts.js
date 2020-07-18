@@ -4,10 +4,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const parent_location = document.querySelector('.location-parent')
   const spinner = document.querySelector(".spinner");
 
+  // Location selector (AJAX)
   if (document.querySelector("select.location-type") !== null) {
     location_type.addEventListener('change', maybeQueryLocations);
     maybeQueryLocations();
   }
+
+  // Flatpickr for datetime fields
+  flatpickr("[data-flatpickr-datetime]", {
+    enableTime: true,
+    defaultDate: "today",
+    altInput: true,
+    altFormat: "j F, Y h:i K"
+  });
 
   async function maybeQueryLocations()
   {

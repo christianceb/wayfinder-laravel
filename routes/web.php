@@ -26,7 +26,7 @@ Auth::routes([
 ]);
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::resource('/events', 'EventController');
+    Route::resource('/events', 'EventsController');
     Route::resource('/uploads', 'UploadsController');
 
     // Locations resource and then some
