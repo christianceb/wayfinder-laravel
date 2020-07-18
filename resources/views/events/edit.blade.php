@@ -22,7 +22,7 @@
         </div>
     @endif
 
-    <form action="{{route('events.update', $events->ID)}}" method="post">
+    <form action="{{route('events.update', $events)}}" method="post">
         @csrf
         @method('patch')
 
@@ -71,13 +71,13 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Start:</strong>
-                    <input type="datetime-local" name="start" value="{{ $events->start }}" class="form-control">
+                    <input type="text" name="start" value="{{ $events->start }}" class="form-control" data-flatpickr-datetime />
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong>Start:</strong>
-                    <input type="datetime-local" name="end" value="{{ $events->end }}" class="form-control">
+                    <input type="text" name="end" value="{{ $events->end }}" class="form-control" data-flatpickr-datetime />
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">

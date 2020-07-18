@@ -66,14 +66,14 @@
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>Start:</strong>
-                <input class="form-control" type="datetime-local" name="start" />
+                <input class="form-control" type="text" name="start" data-flatpickr-datetime />
             </div>
         </div>
 
         <div class="col-xs-12 col-sm-12 col-md-12">
             <div class="form-group">
                 <strong>End:</strong>
-                <input class="form-control" type="datetime-local" name="end" />
+                <input class="form-control" type="text" name="end" data-flatpickr-datetime />
             </div>
         </div>
 
