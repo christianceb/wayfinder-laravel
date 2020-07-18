@@ -10,13 +10,33 @@ document.addEventListener("DOMContentLoaded", () => {
     maybeQueryLocations();
   }
 
-  // Flatpickr for datetime fields
-  flatpickr("[data-flatpickr-datetime]", {
-    enableTime: true,
-    defaultDate: "today",
-    altInput: true,
-    altFormat: "j F, Y h:i K"
-  });
+  gateDelete()
+  datetimePicker()
+
+  function gateDelete()
+  {
+    // Gate delete buttons with a confirmation
+    document.querySelectorAll("[data-confirm-delete]").forEach((element) => {
+      element.addEventListener("click", (event) => {
+        let should_delete = confirm("Are you sure you want to delete this entry?");
+
+        if (!should_delete) {
+          event.preventDefault();
+        }
+      });
+    });
+  }
+
+  function datetimePicker()
+  {
+    // Flatpickr for datetime fields
+    flatpickr("[data-flatpickr-datetime]", {
+      enableTime: true,
+      defaultDate: "today",
+      altInput: true,
+      altFormat: "j F, Y h:i K"
+    });
+  }
 
   async function maybeQueryLocations()
   {
