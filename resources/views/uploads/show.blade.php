@@ -37,7 +37,7 @@
         <form method="POST" action="{{ route('uploads.destroy', $upload) }}">
           @csrf
           @method("DELETE")
-          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-danger" data-confirm-delete>Delete</button>
         </form>
       </div>
     </div>
