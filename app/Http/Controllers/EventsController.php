@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Events;
 use App\Location;
 
-class EventController extends Controller
+class EventsController extends Controller
 {
     /**
      * Display a listing of the resource.
