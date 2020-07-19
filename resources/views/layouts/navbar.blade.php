@@ -1,10 +1,10 @@
-<nav class="navbar navbar-dark bg-dark navbar-expand-md">
+<nav class="navbar navbar-dark bg-danger navbar-expand-md">
   <div class="container">
     <a class="navbar-brand" href="/">Wayfinder</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <div class="collapse navbar-collapse" id="navbar-content">
       @auth
         <ul class="navbar-nav mr-auto">

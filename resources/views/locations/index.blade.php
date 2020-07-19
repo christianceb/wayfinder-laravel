@@ -6,8 +6,8 @@ Locations: Browse
 
 @section('content')
 <div class="container">
-	<h1 class="text-center">Browse Locations</h1>
-	<div class="mt-3 mb-3">
+	<h1>Locations</h1>
+	<div class="mt-2 mb-3">
 		<a href="{{ route('locations.create') }}" class="btn btn-success">
 			Create
 		</a>
@@ -20,7 +20,7 @@ Locations: Browse
 				<th scope="col">Name</th>
 				<th scope="col">Type</th>
                 <th scope="col">Located At</th>
-				<th>Actions</th>
+				<th scope="col">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -40,11 +40,11 @@ Locations: Browse
                         <form action="/locations/{{$location->id}}" method="post">
                             @csrf
                             @method('delete')
-                            <a href="{{ route('locations.show', $location) }}" class="btn btn-info">
+                            <a href="{{ route('locations.show', $location) }}" class="btn btn-primary">
                                 Show
                             </a>
 
-                            <a href="{{ route('locations.edit', $location) }}" class="btn btn-warning">
+                            <a href="{{ route('locations.edit', $location) }}" class="btn btn-secondary">
                                 Edit
                             </a>
                             <button type="submit" class="btn btn-danger" data-confirm-delete>
