@@ -5,18 +5,20 @@
 @endsection
 
 @section('content')
-<div class="row">
-  <div class="col">
-    <div>
-      <a href="{{route('users.create')}}" class="btn btn-primary">Create</a>
+<div class="container">
+    <h1>Users</h1>
+    <div class="mt-2 mb-3">
+      <a href="{{route('users.create')}}" class="btn btn-success">
+          Create
+      </a>
     </div>
-    <table class="table responsive">
+    <table class="table">
       <thead>
         <tr>
-          <td>Id</td>
-          <td>Name</td>
-          <td>Email</td>
-          <td></td>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -27,10 +29,11 @@
           <td>{{$user->email}}</td>
           <td>
             <a href="{{ route('users.show', $user)}}" class="btn btn-primary">Show</a>
-            <a href="{{ route('users.edit', $user)}}" class="btn btn-warning">Edit</a>
+            <a href="{{ route('users.edit', $user)}}" class="btn btn-secondary">Edit</a>
           </td>
         </tr>
         @endforeach
       </tbody>
     </table>
+</div>
 @endsection

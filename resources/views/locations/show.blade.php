@@ -6,7 +6,7 @@ Locations: Show
 
 @section('content')
 <div class="container">
-	<h2>Locations: Show</h2>
+	<h1>Locations: Show</h1>
 	<table class="table">
 		<tbody>
 			<tr>
@@ -44,11 +44,11 @@ Locations: Show
 			@csrf
 			@method('delete')
 
-			<a href="{{url("/locations")}}" class="btn btn-info">
+			<a href="{{url("/locations")}}" class="btn btn-primary">
 				Back
 			</a>
 
-			<a href="{{url("/locations/{$location->id}/edit")}}" class="btn btn-warning">
+			<a href="{{url("/locations/{$location->id}/edit")}}" class="btn btn-secondary">
 				Edit
 			</a>
 
