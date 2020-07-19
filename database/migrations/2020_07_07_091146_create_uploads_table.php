@@ -18,6 +18,7 @@ class CreateUploadsTable extends Migration
             $table->string("title", 255);
             $table->string("uri", 255);
             $table->string("mime_type", 50);
+            $table->unsignedInteger('size');
             $table->timestamp("created_at")->default(DB::raw("CURRENT_TIMESTAMP"));
             $table->timestamp("updated_at")->default(DB::raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
         });

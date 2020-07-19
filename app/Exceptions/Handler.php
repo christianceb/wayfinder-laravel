@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -50,6 +52,22 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        // There is a cleaner and more maintainable way to do this but it has to be done from the client side
+        // https://stackoverflow.com/questions/57761081/laravel-route-model-binding-return-json-response-when-model-id-not-found
+        $routeJsonWhitelist = [
+            "uploads.id"
+        ];
+
+        // Funnel ModelNotFoundException to this block if the request route name is in the whitelist
+        if ($exception instanceof ModelNotFoundException && in_array($request->route()->getName(), $routeJsonWhitelist)) {
+            // Return 404
+            return response()
+                ->json(
+                    ['message' => Response::$statusTexts[Response::HTTP_NOT_FOUND]],
+                    Response::HTTP_NOT_FOUND
+                );
+        }
+
         return parent::render($request, $exception);
     }
 }

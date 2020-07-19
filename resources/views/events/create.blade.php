@@ -31,19 +31,22 @@
       <label>Location</label>
       <select id="eventLocation" class="form-control" name="location_id">
         <option selected disabled>Choose...</option>
+
         <optgroup label="Campus">
           @foreach($locations["campus"] as $location)
-          <option value="{{$location->id}}">{{$location->name}}</option>
+            <option value="{{$location->id}}">{{$location->name}}</option>
           @endforeach
         </optgroup>
+
         <optgroup label="Building">
           @foreach($locations["building"] as $location)
-          <option value="{{$location->id}}">{{$location->name}}</option>
+            <option value="{{$location->id}}">{{$location->name}}</option>
           @endforeach
         </optgroup>
+
         <optgroup label="Room">
           @foreach($locations["room"] as $location)
-          <option value="{{$location->id}}">{{$location->name}}</option>
+            <option value="{{$location->id}}">{{$location->name}}</option>
           @endforeach
         </optgroup>
       </select>
@@ -51,12 +54,19 @@
 
     <div class="form-group">
       <label>Start</label>
-      <input class="form-control" type="text" name="start" data-flatpickr-datetime />
+      <input class="form-control" type="text" name="start" data-datetime-picker />
     </div>
 
     <div class="form-group">
       <label>End</label>
-      <input class="form-control" type="text" name="end" data-flatpickr-datetime />
+      <input class="form-control" type="text" name="end" data-datetime-picker />
+    </div>
+
+    <div class="form-group">
+      <label>Attachment</label>
+      <div class="dropzone-previews" id="upload-preview"></div>
+      <input type="file" data-upload-attachment data-upload-endpoint="{{ route("uploads.store") }}" data-upload-csrf="{{ csrf_token() }}" accept="image/*" />
+      <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id') }}" data-upload-query-url="{{ route("uploads.id") }}" />
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>

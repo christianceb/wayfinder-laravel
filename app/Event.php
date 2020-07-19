@@ -11,11 +11,17 @@ class Event extends Model
         'description',
         'start',
         'end',
-        'location_id'
+        'location_id',
+        'upload_id'
     ];
 
     public function location()
     {
         return $this->hasOne(Location::class, 'id', 'location_id');
+    }
+
+    public function attachment()
+    {
+        return $this->hasOne(Upload::class, 'id', 'upload_id');
     }
 }

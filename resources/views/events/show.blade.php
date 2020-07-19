@@ -3,6 +3,13 @@
 @section('content')
 <div class="container">
   <h1>Events: Show</h1>
+
+  @if ($events->attachment)
+    <div class="row">
+      <img src="{{ $events->attachment->url }}" alt="{{$events->attachment->title}}">
+    </div>
+  @endif
+
   <table class="table">
     <tbody>
       <tr>

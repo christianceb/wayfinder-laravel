@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
   <h1>Events</h1>
+
   <div class="mt-2 mb-3">
     <a class="btn btn-success" href="{{ route('events.create') }}">
       Add Event
@@ -10,9 +11,9 @@
   </div>
 
   @if ($message = Session::get('success'))
-  <div class="alert alert-success">
-    <p>{{ $message }}</p>
-  </div>
+    <div class="alert alert-success">
+      <p>{{ $message }}</p>
+    </div>
   @endif
 
   <table class="table">

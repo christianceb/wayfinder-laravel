@@ -27,6 +27,9 @@ Auth::routes([
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('/events', 'EventsController');
+    
+    // Locations resource and then some
+    Route::get('/uploads/byId/{upload?}', 'UploadsController@byId')->name('uploads.id');
     Route::resource('/uploads', 'UploadsController');
 
     // Locations resource and then some

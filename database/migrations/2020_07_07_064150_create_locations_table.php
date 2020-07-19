@@ -18,6 +18,7 @@ class CreateLocationsTable extends Migration
       $table->string('name', 50);
       $table->tinyInteger('type');
       $table->unsignedBigInteger('parent_id')->nullable()->references('id')->on('locations');
+      $table->unsignedInteger('upload_id')->nullable()->references('id')->on('uploads');
       $table->timestamp('created_at')->useCurrent();
       $table->timestamp('updated_at')->useCurrent();
     });

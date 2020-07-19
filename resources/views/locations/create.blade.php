@@ -10,7 +10,6 @@ Locations: Create
 
   <form action="/locations" method="post">
     @csrf
-    @method('post')
 
     <div class="form-group">
       <label for="locationsName">Name</label>
@@ -45,6 +44,13 @@ Locations: Create
     <div class="form-group location-parent">
       <label for="locationsParent">Located At</label>
       <select id="locationsParent" class="form-control" name="parent"></select>
+    </div>
+
+    <div class="form-group">
+      <label>Attachment</label>
+      <div class="dropzone-previews" id="upload-preview"></div>
+      <input type="file" data-upload-attachment data-upload-endpoint="{{ route("uploads.store") }}" data-upload-csrf="{{ csrf_token() }}" accept="image/*" />
+      <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id') }}" data-upload-query-url="{{ route("uploads.id") }}" />
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
