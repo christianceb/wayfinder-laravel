@@ -7,6 +7,13 @@ Locations: Show
 @section('content')
 <div class="container">
 	<h1>Locations: Show</h1>
+
+	@if ($location->attachment)
+		<div class="row">
+				<img src="{{ $location->attachment->url }}" alt="{{$location->attachment->title}}">
+		</div>
+	@endif
+
 	<table class="table">
 		<tbody>
 			<tr>

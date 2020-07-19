@@ -53,13 +53,15 @@ class LocationsController extends Controller
 		request()->validate([
 			'name' => ['required', 'max:50'],
 			'type' => 'required',
-			'parent' => ['nullable', 'numeric', 'gt:0']
+			'parent' => ['nullable', 'exists:App\Location,id'],
+			'upload_id' => ['nullable', 'exists:App\Upload,id']
 		]);
 
 		$location = new Location();
 		$location->name = $request->name;
 		$location->type = $request->type;
 		$location->parent_id = $location->type > 0 ? $request->parent : null;
+		$location->upload_id = $request->upload_id;
 		$location->save();
 
 		return redirect(route('locations.index'))->with('success', 'Location created successfully.');
@@ -105,13 +107,15 @@ class LocationsController extends Controller
 		request()->validate([
 			'name' => ['required', 'max:50'],
 			'type' => 'required',
-			'parent' => ['nullable', 'numeric', 'gt:0']
+			'parent' => ['nullable', 'numeric', 'gt:0'],
+			'upload_id' => ['nullable', 'exists:App\Upload,id']
 		]);
 
-        $location->fill([
-            'name' => request('name'),
-            'type' => request('type')
-        ]);
+		$location->fill([
+			'name' => request('name'),
+			'type' => request('type'),
+			'upload_id' => request('upload_id')
+		]);
 
 		// Top level type do not have parents. For some reason, if type is set to 0, it still remembers
 		// its old value, what? even the browser request doesnt have this set that Laravel has its own

@@ -44,6 +44,13 @@ Locations: Update
       <label>Located At</label>
       <select class="form-control" name="parent_id" data-original-value="{{$location->parent_id}}" data-current-location="{{$location->id}}"></select>
     </div>
+
+    <div class="form-group">
+      <label>Attachment</label>
+      <div class="dropzone-previews" id="upload-preview"></div>
+      <input type="file" data-upload-attachment data-upload-endpoint="{{ route("uploads.store") }}" data-upload-csrf="{{ csrf_token() }}" accept="image/*" />
+      <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id', $location->attachment->id) }}" data-upload-query-url="{{ route("uploads.id") }}" />
+    </div>
     
     <button type="submit" class="btn btn-primary">Submit</button>
     <a href="{{ route('locations.index') }}" class="btn btn-danger">Cancel</a>

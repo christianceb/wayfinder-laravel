@@ -110,7 +110,8 @@ class EventsController extends Controller
             'description' => ['required', 'max:250'],
             'start' => ['required'],
             'end' => ['required'],
-            'location_id' => ['required']
+            'location_id' => ['required', 'exists:App\Location,id'],
+            'upload_id' => ['nullable', 'exists:App\Upload,id'],
         ]);
     }
 }

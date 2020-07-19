@@ -36,4 +36,9 @@ class Location extends Model
 	{
 		return $this->belongsTo(self::class, 'parent_id', 'id');
 	}
+
+	public function attachment()
+	{
+			return $this->hasOne(Upload::class, 'id', 'upload_id');
+	}
 }

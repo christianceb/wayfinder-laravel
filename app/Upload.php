@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Upload extends Model
 {
-    protected $guarded = [];
+    protected $guarded = ['file'];
+    protected $appends = ['url'];
 
     public function getUrlAttribute()
     {

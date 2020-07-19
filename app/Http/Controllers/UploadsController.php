@@ -6,6 +6,7 @@ use App\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class UploadsController extends Controller
 {
@@ -39,35 +40,44 @@ class UploadsController extends Controller
      */
     public function store(Request $request)
     {
+        $status = Response::HTTP_BAD_REQUEST;
+        $content = [];
+
         $file = request("file");
 
         $toValidate = [
             "file" => $file,
             "title" => basename($file->getClientOriginalName(), ".".$file->getClientOriginalExtension()),
-            "mime_type" => $file->getClientMimeType()
+            "mime_type" => $file->getClientMimeType(),
+            "size" => $file->getSize()
         ];
 
         // title length is maxed to 225 so that in URI, there is enough length when extension and path is compounded
         $validator = Validator::make($toValidate, [
             'file' => ['required', 'image', 'max:10000'],
             'title' => ['required', 'max:225', 'alpha_dash'],
-            'mime_type' => ['required']
+            'mime_type' => ['required'],
+            'size' => ['required']
         ]);
 
         if ($validator->fails()) {
-            return redirect(route('uploads.create'))
-                ->withErrors($validator)
-                ->withInput();
+            $content['errors'] = $validator->errors();
+        }
+        else
+        {
+            // Run uploads routine
+            // Save validated file and its URI
+            $toValidate['uri'] = $toValidate['file']->store("uploads/" . date("Y") . "/" . date("m"));
+            $upload = Upload::create($toValidate);
+
+            // Run necessary routine to show a meaningful JSON response
+            $content['upload'] = $upload;
+            $status = Response::HTTP_OK;
         }
 
-        $upload = new Upload();
-        $upload->title = $toValidate['title'];
-        $upload->mime_type = $toValidate['mime_type'];
-        $upload->uri = request('file')->store("uploads/" . date("Y") . "/" . date("m"));
+        $content['message'] = Response::$statusTexts[$status];
 
-        $upload->save();
-
-        return redirect(route('uploads.index'));
+        return response()->json(['upload' => $upload], $status);
     }
 
     /**
@@ -81,6 +91,16 @@ class UploadsController extends Controller
         return view('uploads.show', [
             'upload' => $upload,
         ]);
+    }
+
+    public function byId(Upload $upload)
+    {
+        $status = Response::HTTP_OK;
+
+        return response()->json([
+            "upload" => $upload,
+            "message" => Response::$statusTexts[$status]
+        ], $status);
     }
 
     /**
