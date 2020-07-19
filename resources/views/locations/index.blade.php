@@ -9,7 +9,7 @@ Locations: Browse
 	<h1>Locations</h1>
 	<div class="mt-2 mb-3">
 		<a href="{{ route('locations.create') }}" class="btn btn-success">
-			Create
+			Add Location
 		</a>
 	</div>
 

@@ -1,47 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Event Show</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ url('/events/')}}"> Back</a>
-            </div>
-        </div>
-    </div>
+    <div class="container">
+        <h1>Events: Show</h1>
+        <table class="table">
+            <tbody>
+            <tr>
+                <th scope="col" class="text-primary">Title</th>
+                <td>{{$events->title}}</td>
+            <tr>
+            <tr>
+                <th scope="col" class="text-primary">Description</th>
+                <td>{{$events->description}}</td>
+            <tr>
+            <tr>
+                <th scope="col" class="text-primary">Location</th>
+                <td>{{$events->location->name}}</td>
+            </tr>
+            <tr>
+                <th scope="col" class="text-primary">Start</th>
+                <td>{{$events->start}}</td>
+            </tr>
+            <tr>
+                <th scope="col" class="text-primary">End</th>
+                <td>{{$events->end}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <form action="/events/{{$events->id}}" method="post">
+                @csrf
+                @method('delete')
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Title:</strong>
-                {{ $events->title }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Description:</strong>
-                {{ $events->description }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Location:</strong>
-                {{ $events->location->name }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>Start:</strong>
-                {{ $events->start }}
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <div class="form-group">
-                <strong>End:</strong>
-                {{ $events->end }}
-            </div>
+                <a href="{{url("/events")}}" class="btn btn-primary">
+                    Back
+                </a>
+
+                <a href="{{url("/events/{$events->id}/edit")}}" class="btn btn-secondary">
+                    Edit
+                </a>
+
+                <button type="submit" class="btn btn-danger">
+                    Delete
+                </button>
+            </form>
         </div>
     </div>
 @endsection

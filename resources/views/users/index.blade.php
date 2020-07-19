@@ -9,7 +9,7 @@
     <h1>Users</h1>
     <div class="mt-2 mb-3">
       <a href="{{route('users.create')}}" class="btn btn-success">
-          Create
+          Add User
       </a>
     </div>
     <table class="table">

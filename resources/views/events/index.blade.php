@@ -1,48 +1,50 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <h2>Events</h2>
-        <a class="btn btn-primary" href="{{ route('events.index') }}">Create Event</a>
+<div class="container">
+    <h1>Events</h1>
+    <div class="mt-2 mb-3">
+        <a class="btn btn-success" href="{{ route('events.create') }}">
+            Add Event
+        </a>
     </div>
-</div>
 
-@if ($message = Session::get('success'))
-    <div class="alert alert-success">
-        <p>{{ $message }}</p>
-    </div>
-@endif
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
 
-<table class="table table-borderless">
-    <thead>
+    <table class="table">
+        <thead>
         <tr>
-            <th scope="col">title</th>
-            <th scope="col">description</th>
-            <th scope="col">start</th>
-            <th scope="col">end</th>
-            <th scope="col">Action</th>
+            <th scope="col">Title</th>
+            <th scope="col">Location</th>
+            <th scope="col">Start</th>
+            <th scope="col">End</th>
+            <th scope="col">Actions</th>
         </tr>
-    </thead>
+        </thead>
 
-    <tbody>
+        <tbody>
         @foreach($events as $event)
             <tr>
                 <td>{{ $event->title }}</td>
-                <td>{{ $event->description }}</td>
+                <td>{{ $event->location->name}}</td>
                 <td>{{ $event->start }}</td>
                 <td>{{ $event->end }}</td>
                 <td>
                     <form action="{{route('events.destroy', $event)}}" method="post">
                         @csrf
                         @method('DELETE')
-                        <a class="btn btn-info" href="{{route('events.show', $event)}}">Show</a>
-                        <a class="btn btn-primary" href="{{route('events.edit', $event)}}">Edit</a>
+                        <a class="btn btn-primary" href="{{route('events.show', $event)}}">Show</a>
+                        <a class="btn btn-secondary" href="{{route('events.edit', $event)}}">Edit</a>
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
             </tr>
         @endforeach
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 @endsection
