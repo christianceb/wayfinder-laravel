@@ -53,6 +53,20 @@ Locations: Create
       <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id') }}" data-upload-query-url="{{ route("uploads.id") }}" />
     </div>
 
+    <div class="form-group">
+      <label>Map</label>
+      <select id="geolocate"></select>
+      <div id="leaflet" class="leaflet" data-zoom="15" data-mp-id="{{old('mp_id')}}" data-mp-type="{{old('mp_type')}}"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" class="form-control" name="address" value="{{old('address')}}" />
+    </div>
+
+    <input type="hidden" name="mp_id" value="{{old('mp_id')}}" />
+    <input type="hidden" name="mp_type" value="{{old('mp_type')}}" />
+
     <button type="submit" class="btn btn-primary">Submit</button>
     <a href="{{url('/locations')}}" class="btn btn-danger">Cancel</a>
   </form>
