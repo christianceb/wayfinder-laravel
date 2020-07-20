@@ -26,11 +26,11 @@
             <td><?= $upload->title ?></td>
             <td><?= $upload->mime_type ?></td>
             <td>
-              <a class="btn btn-primary" href="{{ route('uploads.show', $upload) }}" role="button">View</a>
-              <a class="btn btn-secondary" href="{{ route('uploads.edit', $upload) }}" role="button">Edit</a>
               <form method="POST" action="{{ route('uploads.destroy', $upload) }}">
                 @csrf
                 @method("DELETE")
+                  <a class="btn btn-primary" href="{{ route('uploads.show', $upload) }}" role="button">Show</a>
+                  <a class="btn btn-secondary" href="{{ route('uploads.edit', $upload) }}" role="button">Edit</a>
                 <button type="submit" class="btn btn-danger">Delete</button>
               </form>
             </td>
