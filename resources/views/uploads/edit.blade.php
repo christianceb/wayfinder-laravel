@@ -8,8 +8,6 @@
   <div class="container">
     <h1>Uploads: Edit</h1>
 
-    <a class="btn btn-success" href="{{ route('uploads.show', $upload) }}" role="button">Back to Upload</a>
-
     <div class="row">
       <div class="col-2">
         <img src="{{$upload->url}}" alt="{{$upload->title}}" />
@@ -43,8 +41,8 @@
             <input type="text" class="form-control" value="{{$upload->updated_at}}" disabled>
           </div>
 
-
           <button type="submit" class="btn btn-primary">Submit</button>
+          <a class="btn btn-danger" href="{{ route('uploads.show', $upload) }}" role="button">Cancel</a>
         </form>
       </div>
     </div>

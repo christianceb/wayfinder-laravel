@@ -6,7 +6,7 @@ Locations: Create
 
 @section('content')
 <div class="container">
-  <h2>Locations: Create</h2>
+  <h2>Locations: Add</h2>
 
   <form action="/locations" method="post">
     @csrf
@@ -22,7 +22,7 @@ Locations: Create
 
     <div class="form-group">
       <label for="locationsType">Type</label>
-      
+
       <select id="locationsType" class="form-control location-type" name="type" data-resource="{{ route("locations.type") }}">
         <option selected disabled>Choose...</option>
 
