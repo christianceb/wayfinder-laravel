@@ -8,16 +8,16 @@
     <div class="collapse navbar-collapse" id="navbar-content">
       @auth
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
+          <li class="nav-item {{ request()->is("events*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('events.index') }}">Events</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item {{ request()->is("locations*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('locations.index') }}">Locations</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item {{ request()->is("uploads*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('uploads.index') }}">Uploads</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item {{ request()->is("users*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('users.index') }}">Users</a>
           </li>
         </ul>
