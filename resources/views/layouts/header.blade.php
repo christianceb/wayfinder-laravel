@@ -1,7 +1,7 @@
-<header class="header bg-white">
-  <div class="container header-container bg-white">
-    <div class="app-header bg-white pt-3 pb-3">
-      <img src="{{URL::asset('/img/logo.jpg')}}" alt="wayfinder-logo">
+<header class="bg-white">
+  <div class="container bg-white">
+    <div class="py-3">
+      <img src="{{asset('img/logo.jpg')}}" alt="Wayfinder" class="mw-100">
     </div>
   </div>
 </header>
