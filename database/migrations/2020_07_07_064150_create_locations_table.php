@@ -15,10 +15,18 @@ class CreateLocationsTable extends Migration
   {
     Schema::create('locations', function (Blueprint $table) {
       $table->id();
-      $table->string('name', 50);
+      $table->string('name', 50); 
       $table->tinyInteger('type');
+
+      // Location and meta
       $table->unsignedBigInteger('parent_id')->nullable()->references('id')->on('locations');
-      $table->unsignedInteger('upload_id')->nullable()->references('id')->on('uploads');
+      $table->unsignedBigInteger('upload_id')->nullable()->references('id')->on('uploads');
+      $table->string('address', 256);
+
+      // MP = M(ap) P(provider) such as OSM, Mapbox, MazeMap, etc.
+      $table->unsignedBigInteger('mp_id')->nullable();
+      $table->char('mp_type', 1)->nullable();
+      
       $table->timestamp('created_at')->useCurrent();
       $table->timestamp('updated_at')->useCurrent();
     });

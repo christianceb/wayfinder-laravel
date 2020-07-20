@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark bg-danger navbar-expand-md">
+<nav class="navbar navbar-dark navbar-expand-md">
   <div class="container">
     <a class="navbar-brand" href="/">Wayfinder</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">

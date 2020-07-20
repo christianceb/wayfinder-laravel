@@ -13,6 +13,176 @@ document.addEventListener("DOMContentLoaded", () => {
   gateDelete()
   datetimePicker()
   attachmentUploader()
+  osm()
+
+  function osm()
+  {
+    let leaflet_map;
+    let leaflet_marker
+  
+    initializeLeafletJS();
+    initializeS2Nominatim();
+    initializeS2();
+  
+    function initializeLeafletJS() {
+      if ( $( "#leaflet" ).length > 0 ) {
+        leaflet_marker = L.marker();
+        const default_zoom = 13;
+        const default_location = {
+          x: -31.9529,
+          y: 115.8605
+        }; // Perth
+        leaflet_map = L.map('leaflet');
+        let set_zoom = $( "#leaflet" ).data( "zoom" );
+        let zoom;
+        
+        let mp_id = $( "#leaflet" ).data( "mp-id" );
+        let mp_type = $( "#leaflet" ).data( "mp-type" );
+  
+        if ( set_zoom != "" ) {
+          zoom = set_zoom;
+        } else {
+          zoom = default_zoom;
+        }
+  
+        if ( mp_id && mp_type ) {
+          // TODO: always geolocate because mp_id and long/lat pair may not match
+          $.get(
+            "https://nominatim.openstreetmap.org/reverse",
+            {
+              format: 'json',
+              osm_id: mp_id,
+              osm_type: mp_type.toUpperCase(),
+            }, ( data ) => {
+              leaflet_map.setView( [ data.lat, data.lon ], zoom);
+              setMarker( data.lat, data.lon );
+            } 
+          );
+  
+        } else {
+          leaflet_map.setView( [ default_location.x, default_location.y ], zoom);
+        }
+  
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+        }).addTo(leaflet_map);
+        
+        leaflet_map.on('click', function ( e ) {
+          // Honor preventing of moving the pin
+          if (typeof e.originalEvent.target.dataset.noPinMove === 'undefined') {
+            $.get(
+              "https://nominatim.openstreetmap.org/reverse",
+              {
+                format: 'json',
+                lat: e.latlng.lat,
+                lon: e.latlng.lng,
+              }, ( data ) => {
+                leaflet_map.setView( [ data.lat, data.lon ], zoom);
+                setMarker( data.lat, data.lon );
+                setMapPostData( data.osm_id, data.osm_type, data.display_name );
+  
+                // Clear location search values
+                $('#geolocate').val("").trigger('change');
+              } 
+            );
+          }
+
+        } );
+      }
+    }
+  
+    /**
+     * Initializes S(elect)2 and Nominatim (geocode)
+     */
+    function initializeS2Nominatim() {
+      if ( $( "#geolocate" ).length > 0 ) {
+        $( "#geolocate" ).select2( {
+          width: "100%",
+          placeholder: "Search for a location",
+          ajax: {
+            url: 'https://nominatim.openstreetmap.org/search',
+            dataType: 'json',
+            delay: 250,
+            data: function ( params ) {
+              return {
+                format: 'json',
+                limit: 5,
+                countrycodes: 'au',
+                q: params.term
+              };
+            },
+            processResults: function ( data ) {
+              return {
+                results: data.map( function( result ) {
+                  return {
+                    id: result.osm_id,
+                    text: result.display_name,
+                    lat: result.lat,
+                    lon: result.lon,
+                    mp_id: result.osm_id,
+                    mp_type: result.osm_type,
+                  }
+                } )
+              };
+            }
+          },
+          templateSelection: function ( data ) {
+            // Set data attributes
+            $(data.element).attr('data-lat', data.lat);
+            $(data.element).attr('data-lon', data.lon);
+            $(data.element).attr('data-mp-id', data.mp_id);
+            $(data.element).attr('data-mp-type', data.mp_type);
+    
+            return data.text;
+          },
+          minimumInputLength: 3,
+        } );
+  
+        $( "#geolocate" ).on( "change", ( event ) => {
+          let selected = $( '#geolocate' ).find( ':selected' );
+          let lat = $( selected ).data( 'lat' ), lon = $( selected ).data( 'lon' );
+          let zoom = $( "#leaflet" ).data( "zoom" );
+  
+          // For some reason, clicking on the map triggers changes in this select2 instance. WTF?
+          if ( lat && lon ) {
+            setMapPostData(
+              $( selected ).data( 'mp-id' ),
+              $( selected ).data( 'mp-type' ),
+              $( selected ).text()
+            );
+            setMarker( lat, lon );
+            leaflet_map.setView( [ lat, lon ], zoom);
+          }
+        } )
+      }
+    }
+    
+    function initializeS2() {
+      $( '.select2-normal' ).select2();
+    }
+  
+    function setMapPostData( mp_id, mp_type, address ) {
+      $( "input[name=mp_id]" ).val( mp_id );
+      $( "input[name=address]" ).val( address );
+      
+      if ( mp_type ) {
+        // OSM/Nominatim specific idenfier
+        $( "input[name=mp_type]" ).val( mp_type.substr(0,1) );
+      } else {
+        $( "input[name=mp_type]" ).val( "" );
+      }
+    }
+  
+    function setMarker( lat, lng ) {
+      // Ensure we don't flood layer and that we clear it everytime map is clicked
+      if ( leaflet_map.hasLayer( leaflet_marker ) ) {
+        leaflet_map.removeLayer( leaflet_marker );
+      }
+  
+      leaflet_marker = L.marker( [ lat, lng ] ).addTo( leaflet_map );
+    }
+  }
 
   function gateDelete()
   {

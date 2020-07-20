@@ -10,7 +10,17 @@ Locations: Show
 
 	@if ($location->attachment)
 		<div class="row">
+			<div class="col">
 				<img src="{{ $location->attachment->url }}" alt="{{$location->attachment->title}}">
+			</div>
+		</div>
+	@endif
+
+	@if ($location->mp_id)
+		<div class="row">
+			<div class="col">
+				<div id="leaflet" class="leaflet" data-zoom="15" data-mp-id="{{$location->mp_id}}" data-mp-type="{{$location->mp_type}}" data-no-pin-move></div>
+			</div>
 		</div>
 	@endif
 
@@ -28,14 +38,18 @@ Locations: Show
 				<th scope="col" class="text-primary">Type</th>
 				<td>{{App\Location::getType($location->type)}}</td>
 			</tr>
-            <tr>
-                <th scope="col" class="text-primary">Located At</th>
-                @if(isset($location->parent))
-                    <td>{{$location->parent->name}}</td>
-                @else
-                    <td>{{$location->name}}</td>
-                @endif
-            </tr>
+			<tr>
+					<th scope="col" class="text-primary">Located At</th>
+					@if(isset($location->parent))
+							<td>{{$location->parent->name}}</td>
+					@else
+							<td>{{$location->name}}</td>
+					@endif
+			</tr>
+			<tr>
+				<th scope="col" class="text-primary">Address</th>
+				<td>{{$location->address}}</td>
+			</tr>
 			<tr>
 				<th scope="col" class="text-primary">Created</th>
 				<td>{{$location->created_at}}</td>

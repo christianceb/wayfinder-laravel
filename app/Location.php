@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-	protected $fillable = [
-		'name', 'type', 'parent_id'
-	];
+	protected $guarded = ['parent_id'];
+
 	// static function that can be used on blade files
 	// references: https://stackoverflow.com/questions/29007639/laravel-5-call-a-model-function-in-a-blade-view
 	public static function getType($typeId)
