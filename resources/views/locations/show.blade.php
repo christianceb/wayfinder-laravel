@@ -40,7 +40,14 @@ Locations: Show
 			</tr>
 			<tr>
 					<th scope="col" class="text-primary">Located At</th>
-					<td>{{$location->parent->name ?? "-"}}</td>
+					<td>
+						@isset($location->parent)
+							<a href="{{route('locations.show', $location->parent)}}">{{$location->parent->name}}</a>
+						@else
+							-
+						@endisset
+					</td>
+					
 			</tr>
 			<tr>
 				<th scope="col" class="text-primary">Address</th>

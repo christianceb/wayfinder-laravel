@@ -22,7 +22,9 @@
       <tr>
       <tr>
         <th scope="col" class="text-primary">Location</th>
-        <td>{{$events->location->name}}</td>
+        <td>
+          <a href="{{route('locations.show', $events->location)}}">{{$events->location->name}}</a>
+        </td>
       </tr>
       <tr>
         <th scope="col" class="text-primary">Start</th>

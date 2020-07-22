@@ -43,7 +43,7 @@ Locations: Create
 
     <div class="form-group location-parent">
       <label for="locationsParent">Located At</label>
-      <select id="locationsParent" class="form-control" name="parent"></select>
+      <select id="locationsParent" class="form-control" name="parent_id"></select>
     </div>
 
     <div class="form-group">
