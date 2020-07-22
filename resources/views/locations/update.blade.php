@@ -49,7 +49,7 @@ Locations: Update
       <label>Attachment</label>
       <div class="dropzone-previews" id="upload-preview"></div>
       <input type="file" data-upload-attachment data-upload-endpoint="{{ route("uploads.store") }}" data-upload-csrf="{{ csrf_token() }}" accept="image/*" />
-      <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id', $location->attachment->id) }}" data-upload-query-url="{{ route("uploads.id") }}" />
+      <input type="hidden" id="attachment_id" name="upload_id" value="{{ old('upload_id', $location->attachment->id ?? null) }}" data-upload-query-url="{{ route("uploads.id") }}" />
     </div>
     
     <div class="form-group">

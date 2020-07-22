@@ -36,15 +36,11 @@ Locations: Show
 			<tr>
 			<tr>
 				<th scope="col" class="text-primary">Type</th>
-				<td>{{App\Location::getType($location->type)}}</td>
+				<td>{{$location->typeName}}</td>
 			</tr>
 			<tr>
 					<th scope="col" class="text-primary">Located At</th>
-					@if(isset($location->parent))
-							<td>{{$location->parent->name}}</td>
-					@else
-							<td>{{$location->name}}</td>
-					@endif
+					<td>{{$location->parent->name ?? "-"}}</td>
 			</tr>
 			<tr>
 				<th scope="col" class="text-primary">Address</th>

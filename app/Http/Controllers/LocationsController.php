@@ -50,7 +50,7 @@ class LocationsController extends Controller
 	{
 		$location = Location::create($this->validator());
 
-		$location->parent_id = $location->type > 0 ? $request->parent : null;
+		$location->parent_id = $location->type > 0 ? $request->parent_id : null;
 		$location->save();
 
 		return redirect()->route('locations.show', $location);
@@ -158,7 +158,7 @@ class LocationsController extends Controller
 		return request()->validate([
 			'name' => ['required', 'max:50'],
 			'type' => 'required',
-			'parent' => ['nullable', 'exists:App\Location,id'],
+			'parent_id' => ['nullable', 'exists:App\Location,id'],
 			'upload_id' => ['nullable', 'exists:App\Upload,id'],
 			'address' => ['nullable', 'max:256'],
 			'mp_id' => ['nullable', 'integer', 'min:1'],

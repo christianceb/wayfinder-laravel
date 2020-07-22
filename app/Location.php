@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
 	protected $guarded = ['parent_id'];
+	private $types = ["Campus", "Building", "Room"];
 
 	// static function that can be used on blade files
 	// references: https://stackoverflow.com/questions/29007639/laravel-5-call-a-model-function-in-a-blade-view
@@ -23,6 +24,11 @@ class Location extends Model
 				return "Room";
 				break;
 		}
+	}
+
+	public function getTypeNameAttribute()
+	{
+		return $this->types[$this->type] ?? null;
 	}
 
 	public function children()

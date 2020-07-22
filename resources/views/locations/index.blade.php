@@ -28,14 +28,8 @@ Locations: Browse
       <tr>
         <td>{{$location->id}}</td>
         <td>{{$location->name}}</td>
-        <td>
-          {{App\Location::getType($location->type)}}
-        </td>
-        @if(isset($location->parent))
-        <td>{{$location->parent->name}}</td>
-        @else
-        <td>{{$location->name}}</td>
-        @endif
+        <td>{{$location->typeName}}</td>
+        <td>{{$location->parent->name ?? "-"}}</td>
         <td>
           <form action="/locations/{{$location->id}}" method="post">
             @csrf
@@ -47,6 +41,7 @@ Locations: Browse
             <a href="{{ route('locations.edit', $location) }}" class="btn btn-secondary">
               Edit
             </a>
+
             <button type="submit" class="btn btn-danger" data-confirm-delete>
               Delete
             </button>
