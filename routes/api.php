@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResource('/locations', 'api\LocationsController');
+
+//Route::get('/locations/filter', 'api\LocationsController@byType');
+
+//Route::get('/locations/search/{name?}', 'api\LocationsController@searchByName')->name('locations.name');
+
