@@ -42,7 +42,7 @@ Locations: Update
     </div>
 
     <div class="form-group location-parent">
-      <label>Located At</label>
+      <label>Location in Campus</label>
       <select class="form-control" name="parent_id" data-original-value="{{$location->parent_id}}" data-current-location="{{$location->id}}">
         {{-- will be programmatically filled by JS ;) --}}
       </select>

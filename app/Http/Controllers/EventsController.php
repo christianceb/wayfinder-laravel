@@ -87,7 +87,7 @@ class EventsController extends Controller
     {
         $event->update($this->validator());
 
-        return redirect()->route('events.index')->with('success', 'Event update ');
+        return view('events.show', ['event' => $event]);
     }
 
     /**

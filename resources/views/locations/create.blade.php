@@ -43,7 +43,7 @@ Locations: Create
     </div>
 
     <div class="form-group location-parent">
-      <label for="locationsParent">Located At</label>
+      <label for="locationsParent">Location in Campus</label>
       <select id="locationsParent" class="form-control" name="parent_id" data-original-value="{{old('parent_id')}}">
         {{-- will be programmatically filled by JS ;) --}}
       </select>

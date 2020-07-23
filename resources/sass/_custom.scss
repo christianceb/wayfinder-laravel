@@ -1,3 +1,14 @@
 .leaflet {
   min-height: 20rem;
 }
+
+.uploads {
+  &-index {
+    table {
+      img {
+        max-width: 5rem;
+        max-height: 5rem;
+      }
+    }
+  }
+}
