@@ -116,6 +116,7 @@ class LocationsController extends Controller
 		// delete a particular location by their id's
 		$location = Location::findOrFail($id);
 		$location->delete();
+
 		return redirect(route('locations.index'));
 	}
 

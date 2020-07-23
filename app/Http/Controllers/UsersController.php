@@ -111,13 +111,13 @@ class UsersController extends Controller
     protected function validator(array $data)
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:50'],
             'password' => ['required', 'string', 'min:8'],
         ];
 
         switch (request()->getMethod()) {
             case "POST":
-                $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:users'];
+                $rules['email'] = ['required', 'string', 'email', 'max:100', 'unique:users'];
                 break;
         }
 

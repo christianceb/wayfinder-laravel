@@ -4,9 +4,9 @@
 <div class="container">
   <h1>Events: Show</h1>
 
-  @if ($events->attachment)
+  @if ($event->attachment)
     <div class="row">
-      <img src="{{ $events->attachment->url }}" alt="{{$events->attachment->title}}">
+      <img src="{{ $event->attachment->url }}" alt="{{$event->attachment->title}}">
     </div>
   @endif
 
@@ -14,38 +14,38 @@
     <tbody>
       <tr>
         <th scope="col" class="text-primary">Title</th>
-        <td>{{$events->title}}</td>
+        <td>{{$event->title}}</td>
       <tr>
       <tr>
         <th scope="col" class="text-primary">Description</th>
-        <td>{{$events->description}}</td>
+        <td>{{$event->description}}</td>
       <tr>
       <tr>
         <th scope="col" class="text-primary">Location</th>
         <td>
-          <a href="{{route('locations.show', $events->location)}}">{{$events->location->name}}</a>
+          <a href="{{route('locations.show', $event->location)}}">{{$event->location->name}}</a>
         </td>
       </tr>
       <tr>
         <th scope="col" class="text-primary">Start</th>
-        <td>{{$events->start}}</td>
+        <td>{{$event->start}}</td>
       </tr>
       <tr>
         <th scope="col" class="text-primary">End</th>
-        <td>{{$events->end}}</td>
+        <td>{{$event->end}}</td>
       </tr>
     </tbody>
   </table>
   <div>
-    <form action="/events/{{$events->id}}" method="post">
+    <form action="{{route('events.delete', $event)}}" method="post">
       @csrf
       @method('delete')
 
-      <a href="{{url("/events")}}" class="btn btn-primary">
+      <a href="{{route("events.index")}}" class="btn btn-primary">
         Back
       </a>
 
-      <a href="{{url("/events/{$events->id}/edit")}}" class="btn btn-secondary">
+      <a href="{{route('events.edit', $event)}}" class="btn btn-secondary">
         Edit
       </a>
 

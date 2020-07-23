@@ -15,7 +15,7 @@ class CreateLocationsTable extends Migration
   {
     Schema::create('locations', function (Blueprint $table) {
       $table->id();
-      $table->string('name', 50); 
+      $table->string('name', 256); 
       $table->tinyInteger('type');
 
       // Location and meta
@@ -27,8 +27,7 @@ class CreateLocationsTable extends Migration
       $table->unsignedBigInteger('mp_id')->nullable();
       $table->char('mp_type', 1)->nullable();
       
-      $table->timestamp('created_at')->useCurrent();
-      $table->timestamp('updated_at')->useCurrent();
+      $table->timestamps();
     });
   }
 

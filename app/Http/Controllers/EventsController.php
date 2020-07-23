@@ -55,7 +55,7 @@ class EventsController extends Controller
      */
     public function show(Event $event)
     {
-        return view('events.show', ['events' => $event]);
+        return view('events.show', ['event' => $event]);
     }
 
     /**
@@ -67,7 +67,7 @@ class EventsController extends Controller
     public function edit(Event $event)
     {
         return view('events.edit', [
-            'events' => $event,
+            'event' => $event,
             'locations' => [
                 'campus' => Location::where('type', 0)->get(),
                 'building' => Location::where('type', 1)->get(),
@@ -107,7 +107,6 @@ class EventsController extends Controller
     {
         return request()->validate([
             'title' => ['required', 'max:50'],
-            'description' => ['required', 'max:250'],
             'start' => ['required'],
             'end' => ['required'],
             'location_id' => ['required', 'exists:App\Location,id'],
