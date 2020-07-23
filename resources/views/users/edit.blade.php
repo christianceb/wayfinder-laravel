@@ -25,16 +25,28 @@ Users: Edit
     <div class="form-group">
       <label>Name</label>
       <input type="name" class="form-control" name="name" value="{{$user->name}}" required />
+
+      @error('name')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" class="form-control" value="{{$user->email}}" readonly />
+
+      @error('email')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <div class="form-group">
       <label for="password">Password</label>
       <input type="password" class="form-control" name="password" required />
+
+      @error('password')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <button type="submit" class="btn btn-primary">Save changes</button>

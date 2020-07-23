@@ -27,7 +27,6 @@
 
           <dt>Last updated</dt>
           <dd>{{$upload->updated_at}}</dd>
-
         </dl>
 
         <form method="POST" action="{{ route('uploads.destroy', $upload) }}">

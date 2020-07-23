@@ -22,17 +22,29 @@ Users: Create
 
     <div class="form-group">
       <label>Name</label>
-      <input type="name" class="form-control" name="name" value="{{ old('name') }}" placeholder="Enter User name here...">
+      <input type="name" class="form-control" name="name" value="{{ old('name') }}" placeholder="Enter User name here..." required>
+
+      @error('name')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <div class="form-group">
       <label>Email</label>
-      <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="example@example.com">
+      <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="example@example.com" required>
+
+      @error('email')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <div class="form-group">
       <label>Password</label>
-      <input type="password" class="form-control" name="password" placeholder="Set password here..">
+      <input type="password" class="form-control" name="password" placeholder="Set password here.." required>
+
+      @error('password')
+        <div class="text-danger">{{$message}}</div>
+      @enderror
     </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
