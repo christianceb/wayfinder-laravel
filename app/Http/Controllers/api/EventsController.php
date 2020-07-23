@@ -20,16 +20,25 @@ class EventsController extends Controller
     {
         $events = Event::all();
 
-        if ($request->has('location')) {
-            $events = $events->whereIn('location_id', $request->location_id);
-        }
-
         if ($request->has('title')) {
             $events = Event::where('title','like', "%{$request->title}%")->get();
         }
 
         if ($request->has('after')) {
-            $events = Event::where('start', '>', $request->start)
+            $events = Event::where([
+                            ['start', '>=', $request->after],
+                            ['end', '<=', $request->after]
+                            ])
+                            ->orWhere('end', '>=', $request->after)
+                            ->orderBy('start', 'asc')->get();
+        }
+
+        if ($request->has('before')) {
+            $events = Event::where([
+                            ['start', '<=', $request->before],
+                            ['end', '>=', $request->before]
+                            ])
+                            ->orWhere('start', '<=', $request->before)
                             ->orderBy('start', 'desc')->get();
         }
 

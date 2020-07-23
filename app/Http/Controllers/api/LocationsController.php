@@ -8,7 +8,6 @@ use App\Location;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LocationResource;
 use Illuminate\Http\Request;
-use App\Support\Collection;
 
 
 class LocationsController extends Controller
