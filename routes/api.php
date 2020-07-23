@@ -20,7 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::apiResource('/locations', 'api\LocationsController');
 
-//Route::get('/locations/filter', 'api\LocationsController@byType');
-
-//Route::get('/locations/search/{name?}', 'api\LocationsController@searchByName')->name('locations.name');
+Route::apiResource('/events', 'api\EventsController');
 
