@@ -10,11 +10,11 @@
 
     <div class="row">
 
-      <div class="col-2">
-        <img src="{{$upload->url}}" alt="{{$upload->title}}" />
+      <div class="col-6">
+        <img src="{{$upload->url}}" alt="{{$upload->title}}" class="mw-100" />
       </div>
 
-      <div class="col-10">
+      <div class="col-6">
         <form method="POST" action="{{ route('uploads.update', $upload) }}">
           @csrf
           @method('PUT')
@@ -29,7 +29,22 @@
           </div>
 
           <div class="form-group">
-            <label>MIME Type</label>
+            <label>URI</label>
+            <input type="text" class="form-control" value="{{$upload->uri}}" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>URL</label>
+            <input type="text" class="form-control" value="{{$upload->url}}" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Size</label>
+            <input type="text" class="form-control" value="{{$upload->sizeInKb}} KB" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Type</label>
             <input type="text" class="form-control" value="{{$upload->mime_type}}" readonly>
           </div>
 

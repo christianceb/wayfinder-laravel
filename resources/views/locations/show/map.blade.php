@@ -1,0 +1,1 @@
+<div id="leaflet" class="leaflet" data-zoom="15" data-mp-id="{{$location->mp_id}}" data-mp-type="{{$location->mp_type}}" data-no-pin-move></div>

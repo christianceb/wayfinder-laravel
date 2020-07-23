@@ -13,4 +13,8 @@ class Upload extends Model
     {
         return asset("storage/" . $this->uri);
     }
+
+    public function getSizeInKbAttribute() {
+        return round($this->size / 1024, 2);
+    }
 }

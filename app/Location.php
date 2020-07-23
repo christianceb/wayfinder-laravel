@@ -43,6 +43,11 @@ class Location extends Model
 
 	public function attachment()
 	{
-			return $this->hasOne(Upload::class, 'id', 'upload_id');
+		return $this->hasOne(Upload::class, 'id', 'upload_id');
+	}
+
+	public function events()
+	{
+		return $this->hasMany(Event::class);
 	}
 }

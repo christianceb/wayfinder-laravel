@@ -19,7 +19,7 @@ Locations: Browse
         <th scope="col">Id</th>
         <th scope="col">Name</th>
         <th scope="col">Type</th>
-        <th scope="col">Located At</th>
+        <th scope="col">Location in Campus</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -34,17 +34,11 @@ Locations: Browse
           <form action="/locations/{{$location->id}}" method="post">
             @csrf
             @method('delete')
-            <a href="{{ route('locations.show', $location) }}" class="btn btn-primary">
-              Show
-            </a>
+            <a href="{{ route('locations.show', $location) }}" class="btn btn-primary">Show</a>
 
-            <a href="{{ route('locations.edit', $location) }}" class="btn btn-secondary">
-              Edit
-            </a>
+            <a href="{{ route('locations.edit', $location) }}" class="btn btn-secondary">Edit</a>
 
-            <button type="submit" class="btn btn-danger" data-confirm-delete>
-              Delete
-            </button>
+            <button type="submit" class="btn btn-danger" data-confirm-delete>Delete</button>
           </form>
         </td>
       </tr>

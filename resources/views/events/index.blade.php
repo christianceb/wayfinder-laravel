@@ -10,12 +10,6 @@
     </a>
   </div>
 
-  @if ($message = Session::get('success'))
-    <div class="alert alert-success">
-      <p>{{ $message }}</p>
-    </div>
-  @endif
-
   <table class="table">
     <thead>
       <tr>
@@ -40,7 +34,7 @@
             @method('DELETE')
             <a class="btn btn-primary" href="{{route('events.show', $event)}}">Show</a>
             <a class="btn btn-secondary" href="{{route('events.edit', $event)}}">Edit</a>
-            <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="submit" class="btn btn-danger" data-confirm-delete>Delete</button>
           </form>
         </td>
       </tr>
