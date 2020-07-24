@@ -107,8 +107,9 @@ class EventsController extends Controller
     {
         return request()->validate([
             'title' => ['required', 'max:50'],
-            'start' => ['required'],
-            'end' => ['required'],
+            'description' => ['nullable', 'string'],
+            'start' => ['date'],
+            'end' => ['date'],
             'location_id' => ['required', 'exists:App\Location,id'],
             'upload_id' => ['nullable', 'exists:App\Upload,id'],
         ]);
