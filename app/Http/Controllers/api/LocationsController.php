@@ -1,17 +1,18 @@
 <?php
 
-
 namespace App\Http\Controllers\api;
-
 
 use App\Location;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LocationResource;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class LocationsController extends Controller
 {
+    private $showProps = ['attachment', 'parent'];
+
     /**
      * Display a listing of the resource.
      *
@@ -19,20 +20,30 @@ class LocationsController extends Controller
      */
     public function index(Request $request)
     {
-        $locations = Location::all();
+        $status = Response::HTTP_BAD_REQUEST;
+        $content = [];
+
+        $locations = Location::with($this->showProps);
 
         if ($request->has('type')) {
-            $locations = $locations->whereIn('type', $request->type);
+            $locations->where('type', $request->type);
         }
 
         if ($request->has('name')) {
-            $locations = Location::where('name','like', "%{$request->name}%")->get();
+            $locations->where('name','like', "%{$request->name}%");
         }
 
-        return response([
-            'locations' => LocationResource::collection($locations)->paginate(5),
-            'message' => 'Retrieved Successfully',
-        ], 200);
+        $locations = $locations->get();
+        $status = Response::HTTP_NOT_FOUND;
+
+        if ($locations->isNotEmpty()) {
+            $content['result'] = LocationResource::collection($locations)->paginate(5);
+            $status = Response::HTTP_OK;
+        }
+
+        $content['message'] = Response::$statusTexts[$status];
+
+        return response($content, $status);
     }
 
     /**
@@ -44,8 +55,8 @@ class LocationsController extends Controller
     public function show(Location $location)
     {
         return response([
-            'location' => new LocationResource($location),
-            'message' => 'Retrieved Successfully',
-        ], 200);
+            'result' => new LocationResource($location->load($this->showProps)),
+            'message' => Response::$statusTexts[Response::HTTP_OK],
+        ], Response::HTTP_OK);
     }
 }
