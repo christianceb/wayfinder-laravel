@@ -8,8 +8,6 @@
   <div class="container uploads-index">
     <h1>Uploads</h1>
 
-    <a class="btn btn-success" href="{{ route('uploads.create') }}" role="button">Add</a>
-
     <table class="table">
       <thead>
         <tr>
