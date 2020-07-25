@@ -11,7 +11,7 @@ class Upload extends Model
 
     public function getUrlAttribute()
     {
-        return asset("storage/" . $this->uri);
+        return $this->remote_url ?? asset("storage/" . $this->uri);
     }
 
     public function getSizeInKbAttribute() {
