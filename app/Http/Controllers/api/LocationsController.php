@@ -22,6 +22,9 @@ class LocationsController extends Controller
     {
         $status = Response::HTTP_BAD_REQUEST;
         $content = [];
+        
+        // Clamp per_page to 1-20 items
+        $paginate = $request->has('per_page') ? max(1, min(20, $request->per_page)) : 5;
 
         $locations = Location::with($this->showProps);
 
@@ -37,7 +40,7 @@ class LocationsController extends Controller
         $status = Response::HTTP_NOT_FOUND;
 
         if ($locations->isNotEmpty()) {
-            $content['result'] = LocationResource::collection($locations)->paginate(5);
+            $content['result'] = LocationResource::collection($locations)->paginate($paginate);
             $status = Response::HTTP_OK;
         }
 
