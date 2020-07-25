@@ -17,6 +17,7 @@ class CreateUploadsTable extends Migration
             $table->id();
             $table->string("title", 255);
             $table->string("uri", 255);
+            $table->string("remote_url", 255)->nullable();
             $table->string("mime_type", 50);
             $table->unsignedInteger('size');
             $table->timestamps();

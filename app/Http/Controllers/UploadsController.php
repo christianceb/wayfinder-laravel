@@ -65,9 +65,19 @@ class UploadsController extends Controller
         }
         else
         {
+            $path = "uploads/" . date("Y") . "/" . date("m");
             // Run uploads routine
             // Save validated file and its URI
-            $toValidate['uri'] = $toValidate['file']->store("uploads/" . date("Y") . "/" . date("m"));
+            if (config("filesystems.default") == "s3")
+            {
+                $toValidate['uri'] = $toValidate['file']->storePublicly($path);
+                $toValidate['remote_url'] = Storage::disk('s3')->url($toValidate['uri']);
+            }
+            else
+            {
+                $toValidate['uri'] = $toValidate['file']->store($path, "public");
+            }
+            
             $upload = Upload::create($toValidate);
 
             // Run necessary routine to show a meaningful JSON response
