@@ -22,6 +22,9 @@ class EventsController extends Controller
         $status = Response::HTTP_BAD_REQUEST;
         $content = [];
 
+        // Clamp per_page to 1-20 items
+        $paginate = $request->has('per_page') ? max(1, min(20, $request->per_page)) : 5;
+
         $events = Event::with($this->showProps);
 
         if ($request->has('title')) {
@@ -50,7 +53,7 @@ class EventsController extends Controller
         $status = Response::HTTP_NOT_FOUND;
 
         if ($events->isNotEmpty()) {
-            $content['result'] = EventResource::collection($events)->paginate(5);
+            $content['result'] = EventResource::collection($events)->paginate($paginate);
             $status = Response::HTTP_OK;
         }
 
