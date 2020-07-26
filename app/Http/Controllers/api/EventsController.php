@@ -27,6 +27,10 @@ class EventsController extends Controller
 
         $events = Event::with($this->showProps);
 
+        if ($request->has('location')) {
+            $events->where('location_id', $request->location);
+        }
+
         if ($request->has('title')) {
             $events->where('title','like', "%{$request->title}%");
         }
