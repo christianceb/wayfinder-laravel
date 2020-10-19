@@ -28,6 +28,8 @@
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-free": "^5.13.1"
+        "@fortawesome/fontawesome-free": "^5.13.1",
+        "@mapbox/mapbox-gl-geocoder": "^4.5.1",
+        "mapbox-gl": "^1.12.0"
     }
 }

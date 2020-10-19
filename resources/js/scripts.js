@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const location_type = document.querySelector("select.location-type")
   const parent_location = document.querySelector('.location-parent')
   const spinner = document.querySelector(".spinner")
+  const default_coordinates = [115.8605, -31.9529]; // Perth!
+  const default_fp_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mO8pa5bDwAEwAGvybgUugAAAABJRU5ErkJggg==";
 
   // Location selector (AJAX)
   if (document.querySelector("select.location-type") !== null) {
@@ -13,174 +15,326 @@ document.addEventListener("DOMContentLoaded", () => {
   gateDelete()
   datetimePicker()
   attachmentUploader()
-  osm()
+  mapbox()
 
-  function osm()
+  function mapbox()
   {
-    let leaflet_map;
-    let leaflet_marker
-  
-    initializeLeafletJS();
-    initializeS2Nominatim();
-    initializeS2();
-  
-    function initializeLeafletJS() {
-      if ( $( "#leaflet" ).length > 0 ) {
-        leaflet_marker = L.marker();
-        const default_zoom = 13;
-        const default_location = {
-          x: -31.9529,
-          y: 115.8605
-        }; // Perth
-        leaflet_map = L.map('leaflet');
-        let set_zoom = $( "#leaflet" ).data( "zoom" );
-        let zoom;
-        
-        let mp_id = $( "#leaflet" ).data( "mp-id" );
-        let mp_type = $( "#leaflet" ).data( "mp-type" );
-  
-        if ( set_zoom != "" ) {
-          zoom = set_zoom;
-        } else {
-          zoom = default_zoom;
-        }
-  
-        if ( mp_id && mp_type ) {
-          // TODO: always geolocate because mp_id and long/lat pair may not match
-          $.get(
-            "https://nominatim.openstreetmap.org/reverse",
-            {
-              format: 'json',
-              osm_id: mp_id,
-              osm_type: mp_type.toUpperCase(),
-            }, ( data ) => {
-              leaflet_map.setView( [ data.lat, data.lon ], zoom);
-              setMarker( data.lat, data.lon );
-            } 
-          );
-  
-        } else {
-          leaflet_map.setView( [ default_location.x, default_location.y ], zoom);
-        }
-  
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-        }).addTo(leaflet_map);
-        
-        leaflet_map.on('click', function ( e ) {
-          // Honor preventing of moving the pin
-          if (typeof e.originalEvent.target.dataset.noPinMove === 'undefined') {
-            $.get(
-              "https://nominatim.openstreetmap.org/reverse",
-              {
-                format: 'json',
-                lat: e.latlng.lat,
-                lon: e.latlng.lng,
-              }, ( data ) => {
-                leaflet_map.setView( [ data.lat, data.lon ], zoom);
-                setMarker( data.lat, data.lon );
-                setMapPostData( data.osm_id, data.osm_type, data.display_name );
-  
-                // Clear location search values
-                $('#geolocate').val("").trigger('change');
-              } 
-            );
+    let mapbox_map;
+    let mapbox_geocoder;
+    let mapbox_selected_point;
+    let mapbox_canvas;
+    let mapbox_point_features;
+    let mapbox_point_held;
+    let mapbox_overlay_source;
+
+    initialiseMapbox()
+
+    function initialiseMapbox() {
+      mapboxgl.accessToken = "pk.eyJ1IjoiY2hyaXN0aWFuY2ViIiwiYSI6ImNrZDN4MzQyODEwcTMyc251ZGJnY3R2aDYifQ.Iip2TLYYP-vYS145IdHWXQ";
+
+      if ($("#mapbox").length) {
+        let
+          predefined_coordinates = {
+            lng: $("#mapbox").data('lng'),
+            lat: $("#mapbox").data('lat')
+          },
+          mapbox_map_options = {
+            container: 'mapbox',
+            style: 'mapbox://styles/mapbox/streets-v11'
           }
 
-        } );
-      }
-    }
+        if ($("#mapbox").data('interactive') == false) {
+          mapbox_map_options.interactive = false;
+        }
+
+        if ($("#mapbox").data('zoom')) {
+          mapbox_map_options.zoom = $("#mapbox").data('zoom');
+        } else {
+          mapbox_map_options.zoom = 17;
+        }
+
+        if (von(predefined_coordinates.lat) && von(predefined_coordinates.lng)) {
+          mapbox_map_options.center = [predefined_coordinates.lng, predefined_coordinates.lat];
+          mapbox_selected_point = new mapboxgl.Marker().setLngLat([predefined_coordinates.lng, predefined_coordinates.lat])
+        }
+        else {
+          mapbox_map_options.center = default_coordinates; // Perth!
+        }
+
+        // Instantiate Mapbox
+        window.mapbox_map = mapbox_map = new mapboxgl.Map(mapbox_map_options);
+
+        // If there was a predefined coordinate, then it is likely defining a location, not just a point in the map to center to. Add the marker
+        if (mapbox_selected_point != null) {
+          mapbox_selected_point.addTo(mapbox_map);
+        }
+
+        // Do we need (reverse) geocoding? fire subroutines
+        if ($("#mapbox").data('geocoding')) {
+          // Navigation controls
+          mapbox_map.addControl(new mapboxgl.NavigationControl())
   
-    /**
-     * Initializes S(elect)2 and Nominatim (geocode)
-     */
-    function initializeS2Nominatim() {
-      if ( $( "#geolocate" ).length > 0 ) {
-        $( "#geolocate" ).select2( {
-          width: "100%",
-          placeholder: "Search for a location",
-          ajax: {
-            url: 'https://nominatim.openstreetmap.org/search',
-            dataType: 'json',
-            delay: 250,
-            data: function ( params ) {
-              return {
-                format: 'json',
-                limit: 5,
-                countrycodes: 'au',
-                q: params.term
-              };
+          // Initialise on-map control geocoder and events handler when geocoder runs
+          mapbox_geocoder = (new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            countries: "au",
+            type: "poi,address",
+            marker: {
+              color: '#3FB1CE'
             },
-            processResults: function ( data ) {
-              return {
-                results: data.map( function( result ) {
-                  return {
-                    id: result.osm_id,
-                    text: result.display_name,
-                    lat: result.lat,
-                    lon: result.lon,
-                    mp_id: result.osm_id,
-                    mp_type: result.osm_type,
-                  }
-                } )
-              };
+            filter: function (item) {
+              return item.context
+                .map(function (i) {
+                  return (i.id.split('.').shift() === 'region' && i.text === 'Western Australia');
+                })
+                .reduce(function (acc, cur) {
+                  return acc || cur;
+                });
+            },
+          })).on('result', function(e) {
+            setLocationMeta(e.result.place_name, e.result.id, [e.result.center[0], e.result.center[1]]);
+
+            if (mapbox_selected_point != null) {
+              mapbox_selected_point.remove();
             }
-          },
-          templateSelection: function ( data ) {
-            // Set data attributes
-            $(data.element).attr('data-lat', data.lat);
-            $(data.element).attr('data-lon', data.lon);
-            $(data.element).attr('data-mp-id', data.mp_id);
-            $(data.element).attr('data-mp-type', data.mp_type);
-    
-            return data.text;
-          },
-          minimumInputLength: 3,
-        } );
+          }).on('clear', function() {
+            //console.log("clear");
+          })
+
+          // Add recently initialised on-map control geocoder into map
+          mapbox_map.addControl( mapbox_geocoder,'top-left')
+
+          // Map click handler to reverse geocode
+          mapbox_map.on('click', async function(e) {
+            let query_var_obj = new URLSearchParams({
+              "access_token": mapboxgl.accessToken,
+              "country": "au",
+              "limit": 1,
+              "types": "poi,address"
+            });
   
-        $( "#geolocate" ).on( "change", ( event ) => {
-          let selected = $( '#geolocate' ).find( ':selected' );
-          let lat = $( selected ).data( 'lat' ), lon = $( selected ).data( 'lon' );
-          let zoom = $( "#leaflet" ).data( "zoom" );
+            $.ajax(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?${query_var_obj.toString()}`)
+              .done((data) => {
+                mapbox_geocoder.clear();
   
-          // For some reason, clicking on the map triggers changes in this select2 instance. WTF?
-          if ( lat && lon ) {
-            setMapPostData(
-              $( selected ).data( 'mp-id' ),
-              $( selected ).data( 'mp-type' ),
-              $( selected ).text()
-            );
-            setMarker( lat, lon );
-            leaflet_map.setView( [ lat, lon ], zoom);
-          }
-        } )
+                if (typeof mapbox_selected_point !== "undefined") {
+                  mapbox_selected_point.remove();
+                }
+  
+                if (data.features.length) {
+                  mapbox_selected_point = new mapboxgl.Marker().setLngLat([e.lngLat.lng, e.lngLat.lat]).addTo(mapbox_map);
+                  setLocationMeta(data.features[0].place_name, data.features[0].id, [e.lngLat.lng, e.lngLat.lat]);
+                }
+              });
+          });
+        }
+        // Are we on a floor designer? run subroutines
+        else if ($("#mapbox").data('floor-designer')) {
+          mapbox_map.on('load', () => {
+            primeOverlayHandleEvents();
+            floorDesignerLocationChange();
+
+            $('#building').on("change", (e) => {floorDesignerLocationChange(e)});
+          });
+        }
       }
     }
-    
-    function initializeS2() {
-      $( '.select2-normal' ).select2();
+
+    function primeOverlayHandleEvents() {
+      // Based on the recent op, run the values through the corner finders
+      const corners = squareArea({lng: parseFloat(default_coordinates[0]), lat: parseFloat(default_coordinates[1])});
+      mapbox_point_features = {
+        'type': 'FeatureCollection',
+        'features': [
+          {
+            // SW
+            'type': 'Feature',
+            'properties': {'id': 'swPoint'},
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [corners.sw.lng, corners.sw.lat]
+            },
+          },
+          {
+            // NE
+            'type': 'Feature',
+            'properties': {'id': 'nePoint'},
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [corners.ne.lng, corners.ne.lat]
+            },
+          },
+        ]
+      };
+
+      // Need to hoist canvas to be accessible from this scope
+      mapbox_canvas = mapbox_map.getCanvasContainer();
+
+      // Hover in/out of point states and modifiers
+      mapbox_map.on('mouseenter', 'point', () => {
+        mapbox_canvas.style.cursor = 'move';
+      });
+      mapbox_map.on('mouseleave', 'point', () => {
+        mapbox_canvas.style.cursor = '';
+      });
+
+      // When a point is held
+      mapbox_map.on('mousedown', 'point', (e) => {
+        /**
+         * Because it is impossible to pass this value on the events defined below while still retaining the capability
+         * to remove the event listeners, this needs to be set on a higher scope and later accessed by the event handlers
+         */
+        mapbox_point_held = e.features[0].properties.id;
+
+        // Prevent the default map drag behavior.
+        e.preventDefault();
+        
+        mapbox_canvas.style.cursor = 'grab';
+
+        // Get current overlay image source so we don't have to rerun it every movement (spicy expensive!)
+        mapbox_overlay_source = mapbox_map.getSource('fpoverlayimage');
+        
+        mapbox_map.on('mousemove', onMove);
+        mapbox_map.once('mouseup', onUp);
+      });
     }
-  
-    function setMapPostData( mp_id, mp_type, address ) {
-      $( "input[name=mp_id]" ).val( mp_id );
-      $( "input[name=address]" ).val( address );
-      
-      if ( mp_type ) {
-        // OSM/Nominatim specific idenfier
-        $( "input[name=mp_type]" ).val( mp_type.substr(0,1) );
+
+    function onMove(e) {
+      let coordinates = e.lngLat;
+      let indexToUpdate;
+      let ne, sw;
+
+      // Set a UI indicator for dragging.
+      mapbox_canvas.style.cursor = 'grabbing';
+
+      // Map corners based on which order is being held
+      if (mapbox_point_held == "nePoint") {
+        indexToUpdate = 1;
+        ne = coordinates;
+        sw = {"lng": mapbox_point_features.features[0].geometry.coordinates[0], "lat": mapbox_point_features.features[0].geometry.coordinates[1]};
       } else {
-        $( "input[name=mp_type]" ).val( "" );
+        indexToUpdate = 0;
+        ne = {"lng": mapbox_point_features.features[1].geometry.coordinates[0], "lat": mapbox_point_features.features[1].geometry.coordinates[1]};
+        sw = coordinates;
+      }
+
+      // Update point being held to its new coordinates
+      mapbox_point_features.features[indexToUpdate].geometry.coordinates = [coordinates.lng, coordinates.lat];
+      mapbox_map.getSource('point').setData(mapbox_point_features);
+
+      // Square current coordinates to be applied later
+      const squared = new mapboxgl.LngLatBounds(
+        new mapboxgl.LngLat(sw.lng, sw.lat),
+        new mapboxgl.LngLat(ne.lng, ne.lat)
+      );
+
+      // Update overlay to its new square
+      mapbox_overlay_source.setCoordinates(translateToCorners(squared))
+    }
+
+    function onUp(e) {
+      mapbox_canvas.style.cursor = '';
+        
+      // Unbind mouse/touch events
+      mapbox_map.off('mousemove', onMove);
+      mapbox_map.off('touchmove', onMove);
+    }
+    
+    function floorDesignerLocationChange() {
+      let dataset = null;
+  
+      // Determine if we use placeholder coordinates or use data passed from the events parameter.
+      if (arguments.length > 0) {
+        dataset = arguments[0].target.selectedOptions[0].dataset;
+      } else {
+        dataset = {
+          lng: default_coordinates[0],
+          lat: default_coordinates[1]
+        }
+      }
+  
+      // Based on the recent op, run the values through the corner finders
+      const corners = squareArea({lng: parseFloat(dataset.lng), lat: parseFloat(dataset.lat)});
+      const squared = new mapboxgl.LngLatBounds(
+        new mapboxgl.LngLat(corners.sw.lng, corners.sw.lat),
+        new mapboxgl.LngLat(corners.ne.lng, corners.ne.lat)
+      );
+  
+      // Overlay handling
+      const source = mapbox_map.getSource('fpoverlayimage');
+      if (source === undefined) {
+        // Instantiate overlay source and layer if it doesn't exist yet.
+        mapbox_map.addSource("fpoverlayimage", {
+          "type": "image",
+          "url": default_fp_image,
+          "coordinates": translateToCorners(squared)
+        });
+
+        mapbox_map.addLayer({
+          "id": 'fpoverlaylayer',
+          "source": "fpoverlayimage",
+          "type": 'raster',
+        });
+      }
+      else {
+        // Modify existing source
+        source.setCoordinates(translateToCorners(squared))
+      }
+  
+      // Overlay "handles" handling
+      const point = mapbox_map.getSource('point');
+      if (point === undefined) {
+        // Because source "point" hasn't been added yet, let's add them now.
+        mapbox_map.addSource('point', { 
+          'type': 'geojson',
+          'data': mapbox_point_features
+        });
+  
+        mapbox_map.addLayer({
+          'id': 'point',
+          'type': 'circle',
+          'source': 'point',
+          'paint': {
+            'circle-radius': 5,
+            'circle-color': '#da272d'
+          }
+        });
+      } else {
+        // Source has been instantiated. Now we just have to update it.
+        mapbox_point_features.features[0].geometry.coordinates = [corners.sw.lng, corners.sw.lat]; // SW
+        mapbox_point_features.features[1].geometry.coordinates = [corners.ne.lng, corners.ne.lat]; // NE
+        
+        // Update current data set in point "source"
+        mapbox_map.getSource('point').setData(mapbox_point_features);
+      }
+      
+      // Finally fly you fool
+      mapbox_map.flyTo({
+        center: [dataset.lng, dataset.lat],
+      })
+    }
+  
+    function squareArea(coordinates) {
+      const buffer = 0.00050000; // About the size of a campus? (lol)
+  
+      return {
+        sw: {
+          lng: coordinates.lng - buffer,
+          lat: coordinates.lat - buffer
+        },
+        ne: {
+          lng: coordinates.lng + buffer,
+          lat: coordinates.lat + buffer
+        }
       }
     }
   
-    function setMarker( lat, lng ) {
-      // Ensure we don't flood layer and that we clear it everytime map is clicked
-      if ( leaflet_map.hasLayer( leaflet_marker ) ) {
-        leaflet_map.removeLayer( leaflet_marker );
-      }
-  
-      leaflet_marker = L.marker( [ lat, lng ] ).addTo( leaflet_map );
+    function setLocationMeta(address, id, coordinates) {
+      $("input[name=address]").val(address);
+      $("input[name=mp_id]").val(id);
+      $("input[name=mp_lng]").val(coordinates[0]);
+      $("input[name=mp_lat]").val(coordinates[1]);
     }
   }
 
@@ -225,6 +379,63 @@ document.addEventListener("DOMContentLoaded", () => {
         }).on("addedfile", function(file, xhr, formData) {
           this.previewsContainer.classList.add("dropzone");
           this.element.classList.add("d-none");
+        }).on("removedfile", function(file) {
+          this.previewsContainer.classList.remove("dropzone");
+          this.element.classList.remove("d-none");
+
+          // Unset hidden field value
+          if (attachment_hidden_field !== null) {
+            attachment_hidden_field.value = null;
+          }
+        }).on("success", function(file, response) {
+          // Set hidden field value
+          if (attachment_hidden_field !== null) {
+            attachment_hidden_field.value = response.upload.id;
+          }
+        });
+
+        if ( attachment_hidden_field !== null
+          && von(attachment_hidden_field.value) !== null
+          && von(attachment_hidden_field.dataset.uploadQueryUrl) !== null ) {
+            let meta = await queryUploadMeta({
+              url: attachment_hidden_field.dataset.uploadQueryUrl,
+              id: attachment_hidden_field.value
+            });
+
+            dropzone_instance.displayExistingFile({
+              "name": meta.title,
+              "size": meta.size
+            }, meta.url);
+        }
+      }
+    });
+
+    document.querySelectorAll("[data-upload-attachment-fp]").forEach( async (element) => {
+      if (von(element.dataset.uploadEndpoint) !== null) {
+        let attachment_hidden_field = document.querySelector("#attachment_id");
+
+        let dropzone_instance = new Dropzone(element, {
+          url: element.dataset.uploadEndpoint,
+          previewsContainer: "#upload-preview",
+          addRemoveLinks: true,
+          maxFiles: 1,
+          params: {
+            "_token": von(element.dataset.uploadCsrf) // Append CSRF token
+          },
+          autoProcessQueue: false
+        }).on("addedfile", function(file) {
+          this.previewsContainer.classList.add("dropzone");
+          this.element.classList.add("d-none");
+
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            let source = window.mapbox_map.getSource('fpoverlayimage')
+            source.updateImage({
+              url: reader.result,
+              coordinates: source.coordinates
+            })
+          }
         }).on("removedfile", function(file) {
           this.previewsContainer.classList.remove("dropzone");
           this.element.classList.remove("d-none");
@@ -334,6 +545,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function populateLocatedAt(items) {
     const parent = document.querySelector('.location-parent select');
+    
+    // I don't even remember what are these for anymore :'(
     const original = von(parent.dataset.originalValue);
     const current = von(parent.dataset.currentLocation);
 
@@ -415,5 +628,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hide) {
       element.classList.add("d-none")
     }
+  }
+
+  function translateToCorners(bounds) {
+    let boundsObjects = [
+      bounds.getNorthWest(),
+      bounds.getNorthEast(),
+      bounds.getSouthEast(),
+      bounds.getSouthWest()
+    ];
+
+    return boundsObjects.map((bound) => { return [bound.lng, bound.lat] });
   }
 });

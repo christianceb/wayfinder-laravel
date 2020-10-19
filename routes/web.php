@@ -28,12 +28,16 @@ Auth::routes([
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('/events', 'EventsController');
     
+    // Floor plans
+    Route::resource('/floors', 'FloorsController');
+
     // Locations resource and then some
     Route::get('/uploads/byId/{upload?}', 'UploadsController@byId')->name('uploads.id');
     Route::resource('/uploads', 'UploadsController');
 
     // Locations resource and then some
     Route::get('/locations/type/{type?}', 'LocationsController@byType')->name('locations.type');
+    Route::get('/locations/dump', 'LocationsController@dump')->name('locations.dump');
     Route::resource('/locations', 'LocationsController');
 
     // Users collection has no capability to delete anything

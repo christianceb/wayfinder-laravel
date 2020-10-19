@@ -1,1 +1,6 @@
-<div id="leaflet" class="leaflet" data-zoom="15" data-mp-id="{{$location->mp_id}}" data-mp-type="{{$location->mp_type}}" data-no-pin-move></div>
+<div
+    id="mapbox"
+    class="mapbox"
+    @if ($interactive ?? '')data-interactive="false"@endif
+    @if ($zoom ?? '')data-zoom="{{$zoom}}"@endif
+    ></div>

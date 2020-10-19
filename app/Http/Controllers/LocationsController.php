@@ -154,6 +154,11 @@ class LocationsController extends Controller
 		return response()->json($content, $status);
 	}
 
+	public function dump(Request $request)
+	{
+		return response()->json(Location::all(), Response::HTTP_OK);
+	}
+
 	protected function validator()
 	{
 		return request()->validate([
@@ -162,8 +167,10 @@ class LocationsController extends Controller
 			'parent_id' => ['nullable', 'exists:App\Location,id'],
 			'upload_id' => ['nullable', 'exists:App\Upload,id'],
 			'address' => ['nullable', 'max:256'],
-			'mp_id' => ['nullable', 'integer', 'min:1'],
-			'mp_type' => ['nullable', 'size:1']
+			'mp_id' => ['nullable', 'string', 'min:1', 'max:50'],
+			'mp_type' => ['nullable', 'size:1'],
+			'mp_lat' => ['nullable', 'numeric', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+			'mp_lng' => ['nullable', 'numeric', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/']
 		]);
 	}
 }
