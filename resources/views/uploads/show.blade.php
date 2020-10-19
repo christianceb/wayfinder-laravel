@@ -29,6 +29,10 @@
               <td><input type="text" class="form-control" value="{{$upload->uri}}" readonly></td>
             </tr>
             <tr>
+              <th class="text-primary">File name</th>
+              <td><input type="text" class="form-control" value="{{$upload->filename}}" readonly></td>
+            </tr>
+            <tr>
               <th class="text-primary">URL</th>
               <td><input type="text" class="form-control" value="{{$upload->url}}" readonly></td>
             </tr>

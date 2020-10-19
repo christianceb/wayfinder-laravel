@@ -20,12 +20,13 @@ class CreateLocationsTable extends Migration
 
       // Location and meta
       $table->unsignedBigInteger('parent_id')->nullable()->references('id')->on('locations');
-      $table->unsignedBigInteger('upload_id')->nullable()->references('id')->on('uploads');
+
       $table->string('address', 256)->nullable();
 
       // MP = M(ap) P(provider) such as OSM, Mapbox, MazeMap, etc.
-      $table->unsignedBigInteger('mp_id')->nullable();
-      $table->char('mp_type', 1)->nullable();
+      $table->string('mp_id', 50)->nullable();
+      $table->decimal('mp_lat', 10, 8)->nullable();
+      $table->decimal('mp_lng', 11, 8)->nullable();
       
       $table->timestamps();
     });

@@ -14,6 +14,9 @@
           <li class="nav-item {{ request()->is("locations*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('locations.index') }}">Locations</a>
           </li>
+          <li class="nav-item {{ request()->is("floors*") ? 'active' : null }}">
+            <a class="nav-link" href="{{ route('floors.index') }}">Floor Plans</a>
+          </li>
           <li class="nav-item {{ request()->is("uploads*") ? 'active' : null }}">
             <a class="nav-link" href="{{ route('uploads.index') }}">Uploads</a>
           </li>

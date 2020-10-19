@@ -34,6 +34,11 @@
           </div>
 
           <div class="form-group">
+            <label>File name</label>
+            <input type="text" class="form-control" value="{{$upload->filename}}" readonly>
+          </div>
+
+          <div class="form-group">
             <label>URL</label>
             <input type="text" class="form-control" value="{{$upload->url}}" readonly>
           </div>

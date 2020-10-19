@@ -29,7 +29,7 @@ Locations: Show
   @if ($location->mp_id)
     <div class="row mb-3">
       <div class="col">
-        @include("locations.show.map")
+        <div id="mapbox" class="mapbox" data-interactive="false" data-lat="{{$location->mp_lat}}" data-lng="{{$location->mp_lng}}"></div>
       </div>
     </div>
   @endif
