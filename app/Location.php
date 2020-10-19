@@ -50,4 +50,9 @@ class Location extends Model
 	{
 		return $this->hasMany(Event::class);
 	}
+
+	public function floors()
+	{
+		return $this->hasMany(Floors::class);
+	}
 }

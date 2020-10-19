@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Upload;
+use App\Floor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -77,6 +78,8 @@ class UploadsController extends Controller
             {
                 $toValidate['uri'] = $toValidate['file']->store($path, "public");
             }
+
+            $toValidate['filename'] = str_replace($path . "/", "", $toValidate['uri']);
             
             $upload = Upload::create($toValidate);
 
@@ -158,4 +161,19 @@ class UploadsController extends Controller
 
         return redirect(route('uploads.index'));
     }
+
+    public function dump(Request $request)
+	{
+        if ($request->has('for') && $request->for == "floors")
+        {
+            $upload_ids = Floor::whereNotNull('upload_id')->pluck('upload_id')->toArray();
+            $uploads = Upload::whereIn("id", $upload_ids)->get()->keyBy('id');
+        }
+        else
+        {
+            $uploads = Upload::all()->keyBy('id');
+        }
+
+		return response()->json($uploads, Response::HTTP_OK);
+	}
 }
