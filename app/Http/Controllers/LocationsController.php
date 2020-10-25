@@ -136,7 +136,7 @@ class LocationsController extends Controller
 
 		// Validation successful
 		if (!$validator->fails()) {
-			$locations = Location::select('name', 'id')
+			$locations = Location::with('parent')
 				->where('type', $type)
 				->get();
 
@@ -156,7 +156,7 @@ class LocationsController extends Controller
 
 	public function dump(Request $request)
 	{
-		return response()->json(Location::all(), Response::HTTP_OK);
+		return response()->json(Location::all()->keyBy('id'), Response::HTTP_OK);
 	}
 
 	protected function validator()
@@ -166,6 +166,7 @@ class LocationsController extends Controller
 			'type' => 'required',
 			'parent_id' => ['nullable', 'exists:App\Location,id'],
 			'upload_id' => ['nullable', 'exists:App\Upload,id'],
+			'floor_id' => ['nullable', 'exists:App\Floor,id'],
 			'address' => ['nullable', 'max:256'],
 			'mp_id' => ['nullable', 'string', 'min:1', 'max:50'],
 			'mp_type' => ['nullable', 'size:1'],

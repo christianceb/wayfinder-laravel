@@ -17,32 +17,32 @@ Floor Plans: Browse
     <thead>
       <tr>
         <th scope="col">Id</th>
-        <th scope="col">Level</th>
+        <th scope="col">Name</th>
         <th scope="col">Order</th>
         <th scope="col">Building</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
-      {{-- @foreach($locations as $location)
+      @foreach($floors as $floor)
       <tr>
-        <td>{{$location->id}}</td>
-        <td>{{$location->name}}</td>
-        <td>{{$location->typeName}}</td>
-        <td>{{$location->parent->name ?? "-"}}</td>
+        <td>{{$floor->id}}</td>
+        <td>{{$floor->name}}</td>
+        <td>{{$floor->order}}</td>
+        <td>{{$floor->location->name}}</td>
         <td>
-          <form action="/locations/{{$location->id}}" method="post">
+          <form action="{{route('floors.destroy', $floor)}}" method="post">
             @csrf
             @method('delete')
-            <a href="{{ route('locations.show', $location) }}" class="btn btn-primary">Show</a>
+            <a href="{{ route('floors.show', $floor) }}" class="btn btn-primary">Show</a>
 
-            <a href="{{ route('locations.edit', $location) }}" class="btn btn-secondary">Edit</a>
+            <a href="{{ route('floors.edit', $floor) }}" class="btn btn-secondary">Edit</a>
 
             <button type="submit" class="btn btn-danger" data-confirm-delete>Delete</button>
           </form>
         </td>
       </tr>
-      @endforeach --}}
+      @endforeach
     </tbody>
   </table>
 </div>

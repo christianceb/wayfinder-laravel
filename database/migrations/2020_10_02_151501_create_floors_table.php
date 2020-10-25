@@ -21,7 +21,6 @@ class CreateFloorsTable extends Migration
             $table->decimal('ne_lat', 10, 8)->nullable();
             $table->decimal('sw_lng', 11, 8)->nullable();
             $table->decimal('sw_lat', 10, 8)->nullable();
-            $table->foreignId('upload_id')->constrained();
             $table->timestamps();
         });
     }

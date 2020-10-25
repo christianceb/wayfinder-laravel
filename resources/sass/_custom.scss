@@ -1,5 +1,5 @@
 .leaflet, .mapbox {
-  min-height: 30rem;
+  min-height: 50rem;
 }
 
 .uploads {
@@ -8,6 +8,24 @@
       img {
         max-width: 5rem;
         max-height: 5rem;
+      }
+    }
+  }
+}
+
+.floor-plan {
+  form {
+    button {
+      &[type=submit] {
+        span {
+          display: none;
+        }
+
+        &:disabled {
+          span {
+            display: inline-block;
+          }
+        }
       }
     }
   }

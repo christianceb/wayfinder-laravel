@@ -15,10 +15,11 @@ class CreateFk extends Migration
     {
         Schema::table('locations', function (Blueprint $table) {
             $table->foreignId('upload_id')->nullable()->constrained();
-            $table->foreignId('floors_id')->nullable()->constrained();
+            $table->foreignId('floor_id')->nullable()->constrained();
         });
 
         Schema::table('floors', function (Blueprint $table) {
+            $table->foreignId('upload_id')->constrained();
             $table->foreignId('location_id')->constrained();
         });
     }

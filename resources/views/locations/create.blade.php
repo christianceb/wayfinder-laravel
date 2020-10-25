@@ -24,11 +24,11 @@ Locations: Create
       <label for="locationsType">Type</label>
 
       <select id="locationsType" class="form-control location-type" name="type" data-resource="{{ route("locations.type") }}" required>
-        <option selected disabled>Choose...</option>
+        <option @if(!old('type')) selected @endif disabled hidden>Choose...</option>
 
         @foreach ($types as $index => $type)
-          <option value="{{$index}}" @if(old('type') == $index) selected @endif>{{$type}}</option>
-        @endforeach
+          <option value="{{$index}}" @if(old('type')) selected @endif>{{$type}}</option>
+        @endforeach 
       </select>
 
       @error('type')
@@ -36,15 +36,15 @@ Locations: Create
       @enderror
     </div>
 
-    <div class="text-center spinner">
+    <div class="text-center spinner spinner-location-parent">
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
     </div>
 
     <div class="form-group location-parent">
-      <label>Location in Campus</label>
-      <select class="form-control" name="parent_id" data-original-value="{{old('parent_id')}}">
+      <label>Parent Location</label>
+      <select class="form-control" name="parent_id" data-original-value="{{old('parent_id')}}" data-resource="{{ route("floors.building") }}">
         {{-- will be programmatically filled by JS ;) --}}
       </select>
 
@@ -52,7 +52,22 @@ Locations: Create
         <div class="text-danger">There was a problem processing your selected parent location</div>
       @enderror
     </div>
+
+    <div class="text-center spinner spinner-location-floor">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
     
+    <div class="form-group location-floor">
+      <label>Floor</label>
+      <select class="form-control" name="floor_id" data-original-value="{{old('floor_id')}}"></select>
+
+      @error('floor_id')
+        <div class="text-danger">There was a problem processing your selected floor</div>
+      @enderror
+    </div>
+
     <div class="form-group">
       <label>Attachment</label>
 

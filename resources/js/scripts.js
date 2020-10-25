@@ -1,15 +1,65 @@
+const { floor } = require("lodash");
+
 document.addEventListener("DOMContentLoaded", () => {
   const locations_by_type = [[], [], []]
   const location_type = document.querySelector("select.location-type")
-  const parent_location = document.querySelector('.location-parent')
-  const spinner = document.querySelector(".spinner")
+  const location_parent = document.querySelector('.location-parent')
+  const location_floor = document.querySelector(".location-floor")
+  const spinner_location_parent = document.querySelector(".spinner-location-parent")
+  const spinner_location_floor = document.querySelector(".spinner-location-floor")
   const default_coordinates = [115.8605, -31.9529]; // Perth!
   const default_fp_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mO8pa5bDwAEwAGvybgUugAAAABJRU5ErkJggg==";
 
   // Location selector (AJAX)
-  if (document.querySelector("select.location-type") !== null) {
-    location_type.addEventListener('change', maybeQueryLocations)
-    maybeQueryLocations()
+  if (location_type && location_parent && location_floor)
+  {
+    location_type.addEventListener('change', maybeQueryLocations);
+    location_parent.addEventListener('change', maybeQueryFloorPlans);
+    location_floor.addEventListener('change', renderFloorOverlay);
+
+    sequentiallyRunLocationEvents();
+  }
+
+  async function sequentiallyRunLocationEvents() {
+    await maybeQueryLocations();
+    await maybeQueryFloorPlans();
+    await renderFloorOverlay();
+  }
+
+  function renderFloorOverlay() {
+    let event, value;
+
+    if (arguments.length > 0) {
+      event = arguments[0];
+      value = event.target.value;
+    } else {
+      const floor_select = location_floor.querySelector('select');
+
+      if (floor_select) {
+        value = floor_select.value;
+      }
+    }
+
+    if (value) {
+      let floor_plan = locations_by_type[2].find(item => { return item.id == value });
+
+      const squared = new mapboxgl.LngLatBounds(
+        new mapboxgl.LngLat(floor_plan.sw_lng, floor_plan.sw_lat),
+        new mapboxgl.LngLat(floor_plan.ne_lng, floor_plan.ne_lat)
+      )
+
+      mapbox_map.addSource("fpoverlayimage", {
+        "type": "image",
+        "url": floor_plan.attachment.url,
+        "coordinates": translateToCorners(squared)
+      })
+
+      mapbox_map.addLayer({
+        "id": 'fpoverlaylayer',
+        "source": "fpoverlayimage",
+        "type": 'raster',
+      })
+    }
   }
 
   gateDelete()
@@ -26,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let mapbox_point_features;
     let mapbox_point_held;
     let mapbox_overlay_source;
+    let mapbox_input_coordinate_corners;
 
     initialiseMapbox()
 
@@ -131,14 +182,60 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         // Are we on a floor designer? run subroutines
         else if ($("#mapbox").data('floor-designer')) {
+          mapbox_input_coordinate_corners = {
+            "ne": {
+              "lng": document.querySelector('form input[name=ne_lng]'),
+              "lat": document.querySelector('form input[name=ne_lat]'),
+            },
+            "sw": {
+              "lng": document.querySelector('form input[name=sw_lng]'),
+              "lat": document.querySelector('form input[name=sw_lat]'),
+            }
+          };
+
           mapbox_map.on('load', () => {
             primeOverlayHandleEvents();
             floorDesignerLocationChange();
+            layerOpacityControl();
 
-            $('#building').on("change", (e) => {floorDesignerLocationChange(e)});
+            $('#building').on("change", (e) => { floorDesignerLocationChange(e) });
+          });
+        }
+        // Are we on a floor show page?
+        else if ($("#mapbox").data('render-floorplan-no-interact')) {
+          let map_dataset = document.querySelector("#mapbox").dataset;
+          const squared = new mapboxgl.LngLatBounds(
+            new mapboxgl.LngLat(map_dataset.swLng, map_dataset.swLat),
+            new mapboxgl.LngLat(map_dataset.neLng, map_dataset.neLat)
+          );
+
+          mapbox_map.on('load', () => {
+            mapbox_map.addSource("fpoverlayimage", {
+              "type": "image",
+              "url": map_dataset.overlay,
+              "coordinates": translateToCorners(squared)
+            });
+    
+            mapbox_map.addLayer({
+              "id": 'fpoverlaylayer',
+              "source": "fpoverlayimage",
+              "type": 'raster',
+            });
           });
         }
       }
+    }
+
+    function layerOpacityControl() {
+      const layerOpacityControl = document.getElementById('mapbox-layer-opacity');
+
+      layerOpacityControl.addEventListener('input', e => {
+        mapbox_map.setPaintProperty(
+          'fpoverlaylayer',
+          'raster-opacity',
+          parseInt(e.target.value, 10) / 100
+        );
+      });
     }
 
     function primeOverlayHandleEvents() {
@@ -235,7 +332,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function onUp(e) {
       mapbox_canvas.style.cursor = '';
-        
+
+      mapbox_input_coordinate_corners.sw.lng.value = mapbox_point_features.features[0].geometry.coordinates[0];
+      mapbox_input_coordinate_corners.sw.lat.value = mapbox_point_features.features[0].geometry.coordinates[1];
+      mapbox_input_coordinate_corners.ne.lng.value = mapbox_point_features.features[1].geometry.coordinates[0];
+      mapbox_input_coordinate_corners.ne.lat.value = mapbox_point_features.features[1].geometry.coordinates[1];
+
       // Unbind mouse/touch events
       mapbox_map.off('mousemove', onMove);
       mapbox_map.off('touchmove', onMove);
@@ -317,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
     function squareArea(coordinates) {
       const buffer = 0.00050000; // About the size of a campus? (lol)
-  
+
       return {
         sw: {
           lng: coordinates.lng - buffer,
@@ -329,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
-  
+
     function setLocationMeta(address, id, coordinates) {
       $("input[name=address]").val(address);
       $("input[name=mp_id]").val(id);
@@ -363,7 +465,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function attachmentUploader() {
+  function attachmentUploader()
+  {
     document.querySelectorAll("[data-upload-attachment]").forEach( async (element) => {
       if (von(element.dataset.uploadEndpoint) !== null) {
         let attachment_hidden_field = document.querySelector("#attachment_id");
@@ -414,7 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (von(element.dataset.uploadEndpoint) !== null) {
         let attachment_hidden_field = document.querySelector("#attachment_id");
 
-        let dropzone_instance = new Dropzone(element, {
+        const dropzone_instance = new Dropzone(element, {
           url: element.dataset.uploadEndpoint,
           previewsContainer: "#upload-preview",
           addRemoveLinks: true,
@@ -437,6 +540,12 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           }
         }).on("removedfile", function(file) {
+          let source = window.mapbox_map.getSource('fpoverlayimage')
+          source.updateImage({
+            url: default_fp_image,
+            coordinates: source.coordinates
+          })
+
           this.previewsContainer.classList.remove("dropzone");
           this.element.classList.remove("d-none");
 
@@ -449,6 +558,9 @@ document.addEventListener("DOMContentLoaded", () => {
           if (attachment_hidden_field !== null) {
             attachment_hidden_field.value = response.upload.id;
           }
+
+          // Submit form as this event is only triggered on the submit button event handler below
+          document.querySelector(".floor-plan form").submit();
         });
 
         if ( attachment_hidden_field !== null
@@ -464,11 +576,19 @@ document.addEventListener("DOMContentLoaded", () => {
               "size": meta.size
             }, meta.url);
         }
+
+        // Prevent form from submitting if we have a deferred upload dropzone instance (floor plans)
+        document.querySelector('.floor-plan form button[type=submit]').addEventListener("click", e => {
+          e.preventDefault();
+          e.target.disabled = true;
+          dropzone_instance.processQueue();
+        });
       }
     });
   }
 
-  async function queryUploadMeta(resource) {
+  async function queryUploadMeta(resource)
+  {
     let url = `${resource.url}/${resource.id}`;
     let meta = null;
 
@@ -496,27 +616,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function maybeQueryLocations()
   {
-    hide(spinner, false);
-    hide(parent_location, true)
+    hide(spinner_location_parent, false);
+    hide(location_parent, true);
+    hide(location_floor, true);
 
     // Don't query if our location type can have no parent
     if (location_type.value > 0) {
-      let query_type = location_type.value - 1;
+      let query_type = location_type.value - 1; // -1 because location_type.value refers to the type of the location in context
       let resource = `${location_type.dataset.resource}/${query_type}`;
       let populate_ok = false;
 
-      if (locations_by_type[location_type.value].length === 0) {
-        if (typeof location_type.dataset.resource !== 'undefined') {
+      if (locations_by_type[location_type.value].length === 0 && location_type.dataset.resource) {
+        await fetch(resource)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(response.status);
+            }
+
+            return response.json()
+          })
+          .then((data) => {
+            locations_by_type[query_type] = data.locations;
+            populate_ok = true;
+          })
+          .catch((error) => {
+            if (error.message == "404") {
+              // OK to populate but locations list is just empty
+              populate_ok = true;
+            }
+            else {
+              alert("There was an error querying locations");
+            }
+          });
+      }
+      else {
+        populate_ok = true;
+      }
+
+      if (populate_ok) {
+        hide(location_parent, false);
+        populateLocatedAt(locations_by_type[query_type]);
+      }
+    }
+
+    hide(spinner_location_parent, true);
+  }
+
+  async function maybeQueryFloorPlans()
+  {
+    hide(spinner_location_floor, false);
+    hide(location_floor, true);
+
+    if (location_type.value == 2)
+    {
+      let populate_ok = false;
+      const location_parent_select = location_parent.querySelector('select');
+
+      if (location_parent_select.value ) {
+        const resource = `${location_parent_select.dataset.resource}/${location_parent_select.value}`;
+
+        if (location_parent_select.value)
+        {
           await fetch(resource)
             .then((response) => {
               if (!response.ok) {
                 throw new Error(response.status);
               }
-
+  
               return response.json()
             })
             .then((data) => {
-              locations_by_type[query_type] = data.locations;
+              locations_by_type[2] = data.floors;
               populate_ok = true;
             })
             .catch((error) => {
@@ -525,22 +695,68 @@ document.addEventListener("DOMContentLoaded", () => {
                 populate_ok = true;
               }
               else {
-                alert("There was an error querying locations");
+                alert("There was an error querying floor plans");
               }
             });
         }
       }
-      else {
-        populate_ok = true;
-      }
 
-      if (populate_ok) {
-        hide(parent_location, false);
-        populateLocatedAt(locations_by_type[query_type]);
+      if (populate_ok)
+      {
+        hide(location_floor, false);
+        populateFloorPlans(locations_by_type[2]);
       }
     }
 
-    hide(spinner, true);
+    hide(spinner_location_floor, true);
+  }
+
+  function populateFloorPlans(items) {
+    const parent = location_floor.querySelector('select');
+    const original = von(parent.dataset.originalValue);
+
+    // Clear existing values
+    while (parent.firstChild) {
+      parent.firstChild.remove();
+    }
+
+    let has_selected = false;
+
+    // Loop through items and append them (if any)
+    items.forEach((floor) => {
+      let option = document.createElement("option");
+      let name = floor.name;
+
+      option.innerText = name;
+      option.value = floor.id;
+
+      if (floor.id == original) {
+        has_selected = option.selected = true;
+      }
+
+      parent.appendChild(option);
+    });
+
+    // Placeholder option
+    let placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.disabled = true;
+    placeholder.hidden = true;
+
+    // Placeholders and whatnot
+    if (items.length) {
+      placeholder.innerText = "Choose a floor";
+    }
+    else {
+      placeholder.innerText = "No selectable floor";
+    }
+
+    // If there was not a selected option when we iterated the loop earlier, set this placeholder as preselected
+    if (!has_selected) {
+      placeholder.selected = true;
+    }
+
+    parent.insertBefore(placeholder, parent.firstChild);
   }
 
   function populateLocatedAt(items) {
@@ -556,9 +772,39 @@ document.addEventListener("DOMContentLoaded", () => {
         parent.firstChild.remove();
       }
 
+      let has_selected = false;
+      
+      // Loop through items and append them (if any)
+      items.forEach((location) => {
+        // Bail early if the location is `this` location
+        if (current !== null && current == location.id) {
+          return;
+        }
+
+        let option = document.createElement("option");
+        let name = location.name;
+
+        // Display parent name if it has a parent
+        if (location.parent !== null) {
+          name += ` (${location.parent.name})`;
+        }
+
+        option.innerText = name;
+        option.value = location.id;
+
+        // If original is set
+        if (original != null && original == location.id) {
+          has_selected = option.selected = true;
+        }
+
+        parent.appendChild(option);
+      });
+
       // Placeholder option
       let placeholder = document.createElement("option");
+      placeholder.value = "";
       placeholder.disabled = true;
+      placeholder.hidden = true;
 
       // There is an item in the list, but if the item is current, then it can't be selected
       let cant_select = false;
@@ -569,34 +815,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+      // Placeholders and whatnot
       if (items.length && !cant_select) {
         placeholder.innerText = "Choose a location";
       }
       else {
-        placeholder.selected = true;
         placeholder.innerText = "No selectable locations";
       }
 
-      parent.appendChild(placeholder);
+      if (has_selected) {
+        placeholder.selected = true;
+      }
 
-      // Loop through items and append them (if any)
-      items.forEach((location) => {
-        // Bail early if the location is `this` location
-        if (current !== null && current == location.id) {
-          return;
-        }
-
-        let option = document.createElement("option");
-        option.innerText = location.name;
-        option.value = location.id;
-
-        // If original is set
-        if (original !== null && original == location.id) {
-          option.selected = true;
-        }
-
-        parent.appendChild(option);
-      });
+      parent.insertBefore(placeholder, parent.firstChild);
     }
   }
 

@@ -35,20 +35,35 @@ Locations: Update
       @enderror
     </div>
     
-    <div class="text-center spinner">
+    <div class="text-center spinner-location-parent">
       <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
       </div>
     </div>
 
     <div class="form-group location-parent">
-      <label>Location in Campus</label>
-      <select class="form-control" name="parent_id" data-original-value="{{old('parent_id', $location->parent_id)}}" data-current-location="{{$location->id}}">
+      <label>Parent Location</label>
+      <select class="form-control" name="parent_id" data-original-value="{{old('parent_id', $location->parent_id)}}" data-current-location="{{$location->id}}" data-resource="{{ route("floors.building") }}">
         {{-- will be programmatically filled by JS ;) --}}
       </select>
 
       @error('parent_id')
         <div class="text-danger">There was a problem processing your selected parent location</div>
+      @enderror
+    </div>
+
+    <div class="text-center spinner spinner-location-floor">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    
+    <div class="form-group location-floor">
+      <label>Floor</label>
+      <select class="form-control" name="floor_id" data-original-value="{{old('floor_id', $location->floor_id)}}"></select>
+
+      @error('floor_id')
+        <div class="text-danger">There was a problem processing your selected floor</div>
       @enderror
     </div>
 
