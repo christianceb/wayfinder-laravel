@@ -627,29 +627,24 @@ document.addEventListener("DOMContentLoaded", () => {
       let populate_ok = false;
 
       if (locations_by_type[location_type.value].length === 0 && location_type.dataset.resource) {
-        await fetch(resource)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(response.status);
-            }
+        const request = await fetch(resource);
 
-            return response.json()
-          })
-          .then((data) => {
-            locations_by_type[query_type] = data.locations;
-            populate_ok = true;
-          })
-          .catch((error) => {
-            if (error.message == "404") {
-              // OK to populate but locations list is just empty
-              populate_ok = true;
-            }
-            else {
-              alert("There was an error querying locations");
-            }
-          });
+        // We are allowing 404 as it could mean the query is going through, just not finding any satisfactory results
+        if (!request.ok && request.status !== 404) {
+          throw new Error("Could not query resource");
+        }
+
+        try {
+          let data = await request.json();
+          locations_by_type[query_type] = data.locations;
+          populate_ok = true;
+        } catch (error) {
+          // OK to populate but locations list is just empty
+          populate_ok = true;
+        }
       }
       else {
+        // What? populate_ok really?
         populate_ok = true;
       }
 
@@ -672,33 +667,30 @@ document.addEventListener("DOMContentLoaded", () => {
       let populate_ok = false;
       const location_parent_select = location_parent.querySelector('select');
 
-      if (location_parent_select.value ) {
+      if (location_parent_select.value) {
         const resource = `${location_parent_select.dataset.resource}/${location_parent_select.value}`;
 
-        if (location_parent_select.value)
-        {
-          await fetch(resource)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(response.status);
-              }
-  
-              return response.json()
-            })
-            .then((data) => {
-              locations_by_type[2] = data.floors;
+        await fetch(resource)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(response.status);
+            }
+
+            return response.json()
+          })
+          .then((data) => {
+            locations_by_type[2] = data.floors;
+            populate_ok = true;
+          })
+          .catch((error) => {
+            if (error.message == "404") {
+              // OK to populate but locations list is just empty
               populate_ok = true;
-            })
-            .catch((error) => {
-              if (error.message == "404") {
-                // OK to populate but locations list is just empty
-                populate_ok = true;
-              }
-              else {
-                alert("There was an error querying floor plans");
-              }
-            });
-        }
+            }
+            else {
+              alert("There was an error querying floor plans");
+            }
+          });
       }
 
       if (populate_ok)
@@ -760,7 +752,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function populateLocatedAt(items) {
-    const parent = document.querySelector('.location-parent select');
+    const parent = location_parent.querySelector('select');
     
     // I don't even remember what are these for anymore :'(
     const original = von(parent.dataset.originalValue);
@@ -823,7 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
         placeholder.innerText = "No selectable locations";
       }
 
-      if (has_selected) {
+      if (!has_selected) {
         placeholder.selected = true;
       }
 
