@@ -19,7 +19,7 @@ class CreateFk extends Migration
         });
 
         Schema::table('floors', function (Blueprint $table) {
-            $table->foreignId('upload_id')->constrained();
+            $table->foreignId('upload_id')->nullable()->constrained();
             $table->foreignId('location_id')->constrained();
         });
     }

@@ -11,7 +11,7 @@ class FloorSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('locations')->insert([
+        DB::table('floors')->insert([
             [
                 "id" => 1,
                 "name" => "L1",
