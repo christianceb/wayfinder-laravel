@@ -21,10 +21,12 @@ Floor plans: Show
       <th>Order</th>
       <td>{{$floor->order}}</td>
     </tr>
-    <tr>
-      <th>Map Overlay</th>
-      <td><a href="{{route('uploads.show', $floor->attachment)}}">View map on page</a></td>
-    </tr>
+    @if ($floor->attachment)
+      <tr>
+        <th>Map Overlay</th>
+        <td><a href="{{route('uploads.show', $floor->attachment)}}">View map on page</a></td>
+      </tr>
+    @endif
     <tr>
       <th>Created</th>
       <td>{{$floor->created_at}}</td>
@@ -44,7 +46,7 @@ Floor plans: Show
         data-sw-lat="{{$floor->sw_lat}}"
         data-ne-lng="{{$floor->ne_lng}}"
         data-ne-lat="{{$floor->ne_lat}}"
-        data-overlay="{{$floor->attachment->url}}"
+        @if ($floor->attachment) data-overlay="{{$floor->attachment->url}}" @endif
         data-render-floorplan-no-interact="true">
       </div>
     </div>

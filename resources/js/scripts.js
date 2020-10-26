@@ -210,17 +210,19 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           mapbox_map.on('load', () => {
-            mapbox_map.addSource("fpoverlayimage", {
-              "type": "image",
-              "url": map_dataset.overlay,
-              "coordinates": translateToCorners(squared)
-            });
-    
-            mapbox_map.addLayer({
-              "id": 'fpoverlaylayer',
-              "source": "fpoverlayimage",
-              "type": 'raster',
-            });
+            if (map_dataset.overlay) {
+              mapbox_map.addSource("fpoverlayimage", {
+                "type": "image",
+                "url": map_dataset.overlay,
+                "coordinates": translateToCorners(squared)
+              });
+      
+              mapbox_map.addLayer({
+                "id": 'fpoverlaylayer',
+                "source": "fpoverlayimage",
+                "type": 'raster',
+              });
+            }
           });
         }
       }
