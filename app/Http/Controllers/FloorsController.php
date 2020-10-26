@@ -43,7 +43,8 @@ class FloorsController extends Controller
 
     public function edit(Floor $floor)
     {
-        dd($floor);
+        // TODO: I need some implementing!
+        abort(404);
     }
 
     public function byBuilding($location) {
